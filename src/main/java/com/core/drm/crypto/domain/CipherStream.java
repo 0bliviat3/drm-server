@@ -1,23 +1,84 @@
 package com.core.drm.crypto.domain;
 
-import org.bouncycastle.crypto.BufferedBlockCipher;
+import org.bouncycastle.crypto.io.CipherInputStream;
+import org.bouncycastle.crypto.io.CipherOutputStream;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 /*
-설계 목적 인터페이스, 다형성 적용필요 없으면 구현 후에 삭제 처리
+ * 스트림을 암복호화 처리함
+ * 파라미터로 스트림을 전달 받아 암복호화된 스트림의 해제까지 관리
+ * 하나의 단일 암복호화만 처리함
+ * CipherInputStream, CipherOutputStream 생성,소멸을 관리
  */
-public interface CipherStream {
+public class CipherStream {
 
-    /*
-     * 스트림을 암복호화 처리함
-     * 파라미터로 스트림을 전달 받아 암복호화된 스트림의 해제까지 관리
-     * 하나의 단일 암복호화만 처리함
-     * CipherInputStream, CipherOutputStream 생성,소멸을 관리
-     */
+    private final InputStream inputStream;
+    private final OutputStream outputStream;
+    private final CipherWrapper cipher;
 
-    public void encrypt(InputStream inputStream, OutputStream outputStream, BufferedBlockCipher cipher);
-    public void decrypt(InputStream inputStream, OutputStream outputStream, BufferedBlockCipher cipher);
+    public CipherStream(
+            final InputStream inputStream,
+            final OutputStream outputStream,
+            final CipherWrapper cipher) {
+        validateCipherStream(inputStream, outputStream, cipher);
+
+        this.inputStream = inputStream;
+        this.outputStream = outputStream;
+        this.cipher = cipher;
+    }
+
+    private void validateCipherStream(InputStream inputStream, OutputStream outputStream, CipherWrapper cipher) {
+        validateStream(inputStream, outputStream);
+        validateCipher(cipher);
+    }
+
+    private void validateStream(InputStream inputStream, OutputStream outputStream) {
+        if (inputStream == null || outputStream == null) {
+            throw new IllegalStateException("[ERROR] 입출력 스트림이 초기화되지 않음");
+            //TODO: 예외 클래스 구현 필요함
+        }
+    }
+
+    private void validateCipher(CipherWrapper cipher) {
+        if (!cipher.isInitCipher()) {
+            throw new IllegalStateException("[ERROR] cipher 객체가 초기화되지 않음");
+            //TODO: 예외 클래스 구현 필요함
+        }
+    }
+
+    public void encrypt() {
+        byte[] buffer = new byte[1024]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
+        int readLength;
+        try (
+                inputStream;
+                outputStream;
+                CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher)
+        ) {
+            while ((readLength = inputStream.read(buffer)) != -1) {
+                cipherOutputStream.write(buffer, 0, readLength);
+            }
+        } catch (IOException e) {
+            //TODO: 예외처리 필요
+        }
+    }
+
+    public void decrypt() {
+        byte[] buffer = new byte[1024]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
+        int readLength;
+        try (
+                inputStream;
+                outputStream;
+                CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher)
+        ) {
+            while ((readLength = cipherInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, readLength);
+            }
+        } catch (IOException e) {
+            //TODO: 예외처리 필요
+        }
+    }
 
 }
