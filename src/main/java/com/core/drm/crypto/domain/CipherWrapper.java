@@ -14,10 +14,12 @@ public class CipherWrapper extends PaddedBufferedBlockCipher {
 
     public CipherWrapper(BlockCipher blockCipher, BlockCipherPadding blockCipherPadding) {
         super(blockCipher, blockCipherPadding);
+        blockCipher.reset();
     }
 
     public CipherWrapper(BlockCipher blockCipher) {
         super(blockCipher);
+        blockCipher.reset();
     }
 
     public boolean isInitCipher() {
