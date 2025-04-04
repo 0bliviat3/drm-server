@@ -1,15 +1,24 @@
 package com.core.drm.crypto;
 
+import com.core.drm.crypto.domain.CipherWrapper;
+import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.StreamBlockCipher;
 import org.bouncycastle.crypto.engines.AESLightEngine;
+import org.bouncycastle.crypto.engines.SEEDEngine;
 import org.bouncycastle.crypto.modes.PGPCFBBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.junit.jupiter.api.Test;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.security.auth.DestroyFailedException;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.function.Function;
 
@@ -38,7 +47,7 @@ public class CryptoTest {
         String key = "1234567891234567";
         String plainText = "abcde";
 
-        BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new AESLightEngine());
+        BufferedBlockCipher cipher = new CipherWrapper(new AESLightEngine());
         cipher.init(true, new KeyParameter(key.getBytes()));
 
         String res = getRes(plainText.getBytes(), cipher, this::encodeToString);
@@ -51,12 +60,46 @@ public class CryptoTest {
         String key = "1234567891234567";
         String cipherText = "bkFnddPWV9J6QFsjupZwvg==";
 
-        BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new AESLightEngine());
+        BufferedBlockCipher cipher = new CipherWrapper(new AESLightEngine());
         cipher.init(false, new KeyParameter(key.getBytes()));
 
         String res = getRes(Base64.getDecoder().decode(cipherText), cipher, String::new);
 
         System.out.println(res.trim());
+    }
+
+    @Test
+    void 대칭키_생성방법() throws NoSuchAlgorithmException, DestroyFailedException {
+
+        String plainText = "abcde";
+
+        BlockCipher cipher = new AESLightEngine();
+        KeyGenerator gen = KeyGenerator.getInstance(cipher.getAlgorithmName());
+        gen.init(128);
+        SecretKey key = gen.generateKey();
+        BufferedBlockCipher cipherWrapper = new CipherWrapper(cipher);
+        cipherWrapper.init(true, new KeyParameter(key.getEncoded()));
+
+        String res = getRes(plainText.getBytes(), cipherWrapper, this::encodeToString);
+
+        System.out.println("암호화: " + res);
+        cipherWrapper.init(false, new KeyParameter(key.getEncoded()));
+
+        String resPlain = getRes(Base64.getDecoder().decode(res), cipherWrapper, String::new);
+
+        System.out.println("복호화: " + resPlain.trim());
+
+        key.destroy();
+    }
+
+    @Test
+    void 키_최대_사이즈_확인() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        BlockCipher blockCipher = new SEEDEngine();
+        int size = Cipher.getMaxAllowedKeyLength(blockCipher.getAlgorithmName());
+
+        System.out.println(size);
+
+        System.out.println(1 << 16);
     }
 
 }
