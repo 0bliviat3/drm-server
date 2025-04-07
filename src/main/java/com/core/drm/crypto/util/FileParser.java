@@ -1,11 +1,6 @@
 package com.core.drm.crypto.util;
 
-import com.core.drm.crypto.domain.asymmetric.AsymmetricCipher;
-
-import javax.crypto.SecretKey;
 import java.io.*;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 public class FileParser {
 
@@ -17,9 +12,7 @@ public class FileParser {
      * 파일 시작점에 암호화된 대칭키 삽입
      * 스트림 닫지 않음
      */
-    public static void addKey(OutputStream outputStream, SecretKey key) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        //key 공개키 암호화 처리 -> 클래스분리 고민
-        byte[] cryptoKey = new AsymmetricCipher().cryptKey(key);
+    public static void addKey(OutputStream outputStream, byte[] cryptoKey) throws IOException{
 
         //파일 최상단에 추가
         byte[] buffer = new byte[1024]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
@@ -39,12 +32,12 @@ public class FileParser {
      * 나머지는 암호화파일로 남은 스트림에 대해 복호화 처리
      * 스트림 닫지 않음
      */
-    public static byte[] parseKey(InputStream inputFileStream) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public static byte[] parseKey(InputStream inputFileStream) throws IOException{
         byte[] cryptoKey = new byte[256]; // 2048비트 고정
         
         BufferedInputStream in = new BufferedInputStream(inputFileStream);
         in.read(cryptoKey); /* read crypto key */
         
-        return new AsymmetricCipher().decryptKey(cryptoKey);
+        return cryptoKey;
     }
 }
