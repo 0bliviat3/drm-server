@@ -1,6 +1,5 @@
-package com.core.drm.crypto.domain;
+package com.core.drm.crypto.domain.cipher;
 
-import com.core.drm.crypto.util.FileParser;
 import org.bouncycastle.crypto.io.CipherInputStream;
 import org.bouncycastle.crypto.io.CipherOutputStream;
 

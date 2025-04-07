@@ -1,4 +1,4 @@
-package com.core.drm.crypto.domain;
+package com.core.drm.crypto.domain.cipher;
 
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
