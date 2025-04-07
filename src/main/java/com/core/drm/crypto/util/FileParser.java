@@ -1,35 +1,15 @@
 package com.core.drm.crypto.util;
 
-import com.core.drm.crypto.domain.KeyStorage;
-import org.bouncycastle.crypto.BufferedAsymmetricBlockCipher;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.engines.RSAEngine;
-import org.bouncycastle.crypto.params.KeyParameter;
+import com.core.drm.crypto.domain.asymmetric.AsymmetricCipher;
 
 import javax.crypto.SecretKey;
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public class FileParser {
 
     private FileParser() {
-    }
-
-    private static byte[] cryptKey(SecretKey key) {
-        BufferedAsymmetricBlockCipher cipher = new BufferedAsymmetricBlockCipher(new RSAEngine());
-        byte[] publicKey = new KeyStorage().getPublicKey().getEncoded();
-        byte[] plainKey = key.getEncoded();
-        cipher.init(true, new KeyParameter(publicKey));
-        cipher.processBytes(plainKey, 0, plainKey.length);
-
-        try {
-            return cipher.doFinal();
-        } catch (InvalidCipherTextException e) {
-            throw new IllegalStateException("[ERROR] 대칭키 암호화 실패: " + e.getMessage()); //TODO: 예외처리
-        }
-    }
-
-    private static SecretKey decryptKey(byte[] cryptoKey) { //TODO: 구현
-        return null;
     }
 
     /*
