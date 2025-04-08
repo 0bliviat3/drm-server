@@ -1,28 +1,30 @@
 package com.core.drm.crypto.domain.asymmetric;
 
+import com.core.drm.crypto.exception.CipherException;
+import com.core.drm.crypto.exception.KeyException;
 import org.bouncycastle.crypto.BufferedAsymmetricBlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 
 import javax.crypto.SecretKey;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
 
 /*
 비대칭키를 사용한 암복호화 클래스
  */
 public class AsymmetricCipher {
 
-    public AsymmetricCipher() {
+    private final AsymmetricKeyManager asymmetricKeyManager;
+
+    public AsymmetricCipher(final AsymmetricKeyManager asymmetricKeyManager) {
+        this.asymmetricKeyManager = asymmetricKeyManager;
     }
 
-    public byte[] cryptKey(SecretKey key) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public byte[] cryptKey(SecretKey key) {
         BufferedAsymmetricBlockCipher cipher = new BufferedAsymmetricBlockCipher(new RSAEngine());
-        RSAPublicKey publicKey = (RSAPublicKey) new AsymmetricKeyManager().getPublicKey();
+        RSAPublicKey publicKey = (RSAPublicKey) asymmetricKeyManager.getPublicKey();
         byte[] plainKey = key.getEncoded();
 
         RSAKeyParameters rsaKeyParameters = new RSAKeyParameters(
@@ -34,13 +36,13 @@ public class AsymmetricCipher {
         try {
             return cipher.doFinal();
         } catch (InvalidCipherTextException e) {
-            throw new IllegalStateException("[ERROR] 대칭키 암호화 실패: " + e.getMessage()); //TODO: 예외처리
+            throw new CipherException("[ERROR] 대칭키 비대칭 암호화 실패", e);
         }
     }
 
-    public byte[] decryptKey(byte[] cryptoKey) throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
+    public byte[] decryptKey(byte[] cryptoKey) {
         BufferedAsymmetricBlockCipher cipher = new BufferedAsymmetricBlockCipher(new RSAEngine());
-        RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) new AsymmetricKeyManager().getPrivateKey();
+        RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) asymmetricKeyManager.getPrivateKey();
 
         RSAKeyParameters rsaKeyParameters = new RSAKeyParameters(
                 true, rsaPrivateKey.getModulus(), rsaPrivateKey.getPrivateExponent());
@@ -51,7 +53,7 @@ public class AsymmetricCipher {
         try {
             return cipher.doFinal();
         } catch (InvalidCipherTextException e) {
-            throw new IllegalStateException("[ERROR] 대칭키 복호화 실패: " + e.getMessage()); //TODO: 예외처리
+            throw new CipherException("[ERROR] 대칭키 비대칭 복호화 실패", e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.core.drm.crypto.domain.cipher;
 
+import com.core.drm.crypto.exception.CipherException;
 import org.bouncycastle.crypto.io.CipherInputStream;
 import org.bouncycastle.crypto.io.CipherOutputStream;
 
@@ -38,35 +39,47 @@ public class CipherStream implements Closeable {
 
     private void validateStream(InputStream inputStream, OutputStream outputStream) {
         if (inputStream == null || outputStream == null) {
-            throw new IllegalStateException("[ERROR] 입출력 스트림이 초기화되지 않음");
-            //TODO: 예외 클래스 구현 필요함
+            throw new CipherException("[ERROR] 입출력 스트림이 초기화되지 않음");
         }
     }
 
     private void validateCipher(CipherWrapper cipher) {
         if (!cipher.isInitCipher()) {
-            throw new IllegalStateException("[ERROR] cipher 객체가 초기화되지 않음");
-            //TODO: 예외 클래스 구현 필요함
+            throw new CipherException("[ERROR] cipher 객체가 초기화되지 않음");
         }
     }
 
-    public void encrypt() throws IOException {
+    public void encrypt() {
         byte[] buffer = new byte[1024]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
         int readLength;
-        CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher);
 
-        while ((readLength = inputStream.read(buffer)) != -1) {
-            cipherOutputStream.write(buffer, 0, readLength);
+        try (CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher)) {
+
+
+            while ((readLength = inputStream.read(buffer)) != -1) {
+                cipherOutputStream.write(buffer, 0, readLength);
+            }
+            cipherOutputStream.flush();
+        } catch (IOException e) {
+            throw new CipherException("[ERROR] 파일 암호화 오류", e);
         }
+
     }
 
-    public void decrypt() throws IOException {
+    public void decrypt() {
         byte[] buffer = new byte[1024]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
         int readLength;
-        CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
 
-        while ((readLength = cipherInputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, readLength);
+        try (CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher)) {
+
+
+            while ((readLength = cipherInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, readLength);
+            }
+
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new CipherException("[ERROR] 파일 복호화 오류", e);
         }
     }
 
