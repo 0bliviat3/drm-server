@@ -15,9 +15,8 @@ public class FileParser {
      * 스트림 닫지 않음
      */
     public static void addKey(OutputStream outputStream, byte[] cryptoKey) {
-
         //파일 최상단에 추가
-        byte[] buffer = new byte[1024]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
+        byte[] buffer = new byte[256]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
         int readLength;
         try (
                 BufferedInputStream keyStream =
@@ -64,9 +63,7 @@ public class FileParser {
         byte[] cryptoKey = new byte[256]; // 2048비트 고정
 
         try {
-            BufferedInputStream in = new BufferedInputStream(inputFileStream);
-            in.read(cryptoKey); /* read crypto key */
-
+            inputFileStream.read(cryptoKey); /* read crypto key */
             return cryptoKey;
         } catch (IOException e) {
             throw new FileParserException("[ERROR] 키 파싱에러", e);
