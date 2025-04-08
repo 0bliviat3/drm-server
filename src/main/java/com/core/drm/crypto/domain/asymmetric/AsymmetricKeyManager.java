@@ -1,5 +1,6 @@
 package com.core.drm.crypto.domain.asymmetric;
 
+import com.core.drm.crypto.exception.KeyException;
 import com.core.drm.crypto.util.PropertiesUtil;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -23,25 +24,32 @@ public class AsymmetricKeyManager {
     public AsymmetricKeyManager() {
     }
 
-    private byte[] readKey(String type) throws IOException {
-
-        PemReader pemReader = new PemReader(new FileReader(PropertiesUtil.getApplicationProperty(type)));
-        PemObject pemObject = pemReader.readPemObject();
-        byte[] keyByte = pemObject.getContent();
-
-        pemReader.close();
-
-        return keyByte;
+    private byte[] readKey(String type) {
+        String path = PropertiesUtil.getApplicationProperty(type);
+        try (PemReader pemReader = new PemReader(new FileReader(path))) {
+            PemObject pemObject = pemReader.readPemObject();
+            return pemObject.getContent();
+        } catch (IOException e) {
+            throw new KeyException("[ERROR] pem 파일 읽기 실패!, 파일경로: " + path, e);
+        }
     }
 
-    public PublicKey getPublicKey() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePublic(new X509EncodedKeySpec(readKey("rsa.public.key.path")));
+    public PublicKey getPublicKey() {
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(new X509EncodedKeySpec(readKey("rsa.public.key.path")));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            throw new KeyException("[ERROR] 공개키 발행 실패", e);
+        }
     }
 
-    public PrivateKey getPrivateKey() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(readKey("rsa.private.key.path")));
+    public PrivateKey getPrivateKey() {
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(readKey("rsa.private.key.path")));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            throw new KeyException("[ERROR] 개인키 발생 실패", e);
+        }
     }
 
 }

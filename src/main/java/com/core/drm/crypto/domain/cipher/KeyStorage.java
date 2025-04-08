@@ -1,5 +1,6 @@
 package com.core.drm.crypto.domain.cipher;
 
+import com.core.drm.crypto.exception.KeyException;
 import org.bouncycastle.crypto.BlockCipher;
 
 import javax.crypto.KeyGenerator;
@@ -16,8 +17,7 @@ public class KeyStorage {
 
             return gen.generateKey();
         } catch (InvalidParameterException | NoSuchAlgorithmException e) {
-            //TODO: key size에 대해 에러발생할 가능성 있음. 에러 래핑할것
-            throw new IllegalStateException("[ERROR] 키생성 오류: " + e.getMessage());
+            throw new KeyException("[ERROR] 대칭키 생성 오류", e);
         }
     }
 
