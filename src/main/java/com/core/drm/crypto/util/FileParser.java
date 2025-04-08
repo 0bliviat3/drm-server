@@ -78,8 +78,7 @@ public class FileParser {
         byte[] iv = new byte[12]; // 96bit
 
         try {
-            BufferedInputStream in = new BufferedInputStream(inputFileStream);
-            in.read(iv); /* read crypto key */
+            inputFileStream.read(iv); /* read crypto key */
 
             return iv;
         } catch (IOException e) {
