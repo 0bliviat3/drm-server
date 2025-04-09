@@ -4,11 +4,17 @@ import com.core.drm.crypto.domain.asymmetric.AsymmetricCipher;
 import com.core.drm.crypto.domain.asymmetric.AsymmetricKeyManager;
 import com.core.drm.crypto.domain.cipher.KeyStorage;
 import org.bouncycastle.crypto.engines.AESLightEngine;
+
 import org.junit.jupiter.api.Test;
 
 import javax.crypto.SecretKey;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class FileParserTest {
 
@@ -59,6 +65,36 @@ public class FileParserTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    void 파일_메타데이터_추가하기() throws IOException {
+
+        //최초 요청시 요청 검사에서 수행할것
+        String path = "./fileSample/sample3.xlsx";
+        Path file = new File(path).toPath();
+        String flag = "true";
+        Files.setAttribute(file, "user:encrypt", flag.getBytes());
+
+        assertThat(flag).isEqualTo(new String((byte[]) Files.getAttribute(file, "user:encrypt")));
+    }
+
+    @Test
+    void 파일_메타데이터_없을때_조회() throws IOException {
+        String path = "./fileSample/sample3.xls";
+        Path file = new File(path).toPath();
+
+        UserDefinedFileAttributeView view = Files.getFileAttributeView(file, UserDefinedFileAttributeView.class);
+        assertThat(view.list().contains("encrypt")).isFalse();
+    }
+
+    @Test
+    void 파일_메타데이터_있을때_조회() throws IOException {
+        String path = "./fileSample/sample3.xlsx";
+        Path file = new File(path).toPath();
+
+        UserDefinedFileAttributeView view = Files.getFileAttributeView(file, UserDefinedFileAttributeView.class);
+        assertThat(view.list().contains("encrypt")).isTrue();
     }
 
 }
