@@ -30,14 +30,20 @@ public class CipherFile {
         return iv;
     }
 
+    private CipherStream initCipherStream(
+            CipherConfig cipherConfig, InputStream inputStream, OutputStream outputStream) {
+        CipherWrapper wrapper = new CipherWrapper(cipherConfig.cipher);
+        CipherParameters params = new AEADParameters(new KeyParameter(cipherConfig.key), 128, cipherConfig.iv); // MAC 표준 128bit
+        wrapper.init(cipherConfig.mode, params);
+        return new CipherStream(inputStream, outputStream, wrapper);
+    }
+
     public void encryptFile(InputStream inputStream, OutputStream outputStream, BlockCipher cipher) {
         SecretKey key = keyStorage.generateKey(cipher, 128); //TODO: AES-128사용
         byte[] iv = generateIV();
 
-        CipherWrapper wrapper = new CipherWrapper(cipher);
-        CipherParameters params = new AEADParameters(new KeyParameter(key.getEncoded()), 128, iv);
-        wrapper.init(true, params);
-        CipherStream cipherStream = new CipherStream(inputStream, outputStream, wrapper);
+        CipherConfig cipherConfig = new CipherConfig(true, cipher, key.getEncoded(), iv);
+        CipherStream cipherStream = initCipherStream(cipherConfig, inputStream, outputStream);
 
         FileParser.addKey(outputStream, asymmetricCipher.cryptKey(key));
         FileParser.addIV(outputStream, iv);
@@ -48,12 +54,13 @@ public class CipherFile {
         byte[] key = asymmetricCipher.decryptKey(FileParser.parseKey(inputStream));
         byte[] iv = FileParser.parseIV(inputStream);
 
-        CipherWrapper wrapper = new CipherWrapper(cipher);
-        CipherParameters params = new AEADParameters(new KeyParameter(key), 128, iv);
-        wrapper.init(false, params);
-        CipherStream cipherStream = new CipherStream(inputStream, outputStream, wrapper);
+        CipherConfig cipherConfig = new CipherConfig(false, cipher, key, iv);
+        CipherStream cipherStream = initCipherStream(cipherConfig, inputStream, outputStream);
 
         cipherStream.decrypt();
+    }
+
+    private record CipherConfig(boolean mode, BlockCipher cipher, byte[] key, byte[] iv) {
     }
 
 }
