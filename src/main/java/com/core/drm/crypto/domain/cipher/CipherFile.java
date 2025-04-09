@@ -47,6 +47,7 @@ public class CipherFile {
 
         FileParser.addKey(outputStream, asymmetricCipher.cryptKey(key));
         FileParser.addIV(outputStream, iv);
+        FileParser.validateOutputStreamPointer(outputStream, 256 + 12);
         cipherStream.encrypt();
     }
 
