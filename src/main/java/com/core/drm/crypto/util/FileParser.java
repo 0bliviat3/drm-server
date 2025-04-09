@@ -3,10 +3,26 @@ package com.core.drm.crypto.util;
 import com.core.drm.crypto.exception.FileParserException;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 
 public class FileParser {
 
     private FileParser() {
+    }
+
+    public static void validateOutputStreamPointer(OutputStream outputStream, int size) {
+        if (outputStream instanceof ByteArrayOutputStream) {
+            int nowSize = ((ByteArrayOutputStream) outputStream).size();
+            if (nowSize != size) {
+                throw new FileParserException(
+                        String.format("[ERROR] 출력스트림 포인터 오류: 현재 위치 %d, 기댓값 %d", nowSize, size));
+            }
+            return;
+        }
+        throw new FileParserException("[ERROR] ByteArrayOutputStream 로 처리해야 합니다.");
     }
 
     /*
@@ -16,6 +32,7 @@ public class FileParser {
      */
     public static void addKey(OutputStream outputStream, byte[] cryptoKey) {
         //파일 최상단에 추가
+        validateOutputStreamPointer(outputStream, 0);
         byte[] buffer = new byte[256]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
         int readLength;
         try (
@@ -37,6 +54,7 @@ public class FileParser {
     순서가 보장되어야 함 -> 함수 호출순서 강제할 필요 있음
      */
     public static void addIV(OutputStream outputStream, byte[] iv) {
+        validateOutputStreamPointer(outputStream, 256);
         byte[] buffer = new byte[12];
         int readLength;
         try (
@@ -48,6 +66,18 @@ public class FileParser {
             }
         } catch (IOException e) {
             throw new FileParserException("[ERROR] iv 추가 에러", e);
+        }
+    }
+
+    /*
+    파일 메타데이터 설정을 통해 암호화, 혹은 복호화처리됨을 표기함
+     */
+    public static void setCryptoFlag(Path path, String mode) {
+        //TODO: mode enum 처리
+        try {
+            Files.setAttribute(path, "user:encrypt", mode.getBytes());
+        } catch (IOException e) {
+            throw new FileParserException("[ERROR] 메타데이터 설정 에러", e);
         }
     }
 
