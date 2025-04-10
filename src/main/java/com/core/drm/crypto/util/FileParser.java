@@ -70,19 +70,6 @@ public class FileParser {
     }
 
     /*
-    파일 메타데이터 설정을 통해 암호화, 혹은 복호화처리됨을 표기함
-     */
-    public static void setCryptoFlag(Path path, String mode) {
-        //TODO: mode enum 처리
-        try {
-            Files.setAttribute(path, "user:encrypt", mode.getBytes());
-        } catch (IOException e) {
-            throw new FileParserException("[ERROR] 메타데이터 설정 에러", e);
-        }
-    }
-
-
-    /*
      * 파일 파싱
      * 파일 시작점에서 암호화 대칭키 분리
      * 분리시점은 파일 읽을때 공개키사이즈만큼만 읽어서 암호화키 가져오고 -> byte[] 메모리상에서만 남김

@@ -2,6 +2,7 @@ package com.core.drm.crypto.domain;
 
 import com.core.drm.crypto.exception.CipherException;
 import com.core.drm.crypto.exception.FileException;
+import com.core.drm.crypto.exception.FileParserException;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 
+
+/*
+암복호화 처리할 파일
+- 유효성을 검증
+- 스트림 변환
+- 메타데이터 추가
+TODO: 모드에 대해 정의가 필요하다 (암호화전, 암호화후, 복호화전, 복호화후)
+ */
 public class CipherFile {
 
     private final File file;
@@ -74,6 +83,18 @@ public class CipherFile {
             return Files.newInputStream(file.toPath());
         } catch (IOException e) {
             throw new FileException("[ERROR] 암호화파일 객체 스트림 변환 에러", e);
+        }
+    }
+
+    /*
+    파일 메타데이터 설정을 통해 암호화, 혹은 복호화처리됨을 표기함
+     */
+    public void setCryptoFlag() {
+        //TODO: mode enum 처리
+        try {
+            Files.setAttribute(file.toPath(), "user:encrypt", mode.getBytes());
+        } catch (IOException e) {
+            throw new FileParserException("[ERROR] 메타데이터 설정 에러", e);
         }
     }
 }
