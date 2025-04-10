@@ -14,7 +14,7 @@ import java.io.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.DisplayName.class)
-public class CipherFileTest {
+public class DRMCipherServiceTest {
 
 
     @Test

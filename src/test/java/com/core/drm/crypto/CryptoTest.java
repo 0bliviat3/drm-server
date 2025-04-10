@@ -1,21 +1,14 @@
 package com.core.drm.crypto;
 
-import com.core.drm.crypto.domain.CipherWrapper;
-import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.BufferedBlockCipher;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.StreamBlockCipher;
+import com.core.drm.crypto.cipher.CipherWrapper;
+import org.bouncycastle.crypto.*;
 import org.bouncycastle.crypto.engines.AESLightEngine;
 import org.bouncycastle.crypto.engines.SEEDEngine;
-import org.bouncycastle.crypto.modes.PGPCFBBlockCipher;
-import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.junit.jupiter.api.Test;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.security.auth.DestroyFailedException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +18,7 @@ import java.util.function.Function;
 public class CryptoTest {
 
 
-    private String getRes(byte[] targetData, BufferedBlockCipher cipher, Function<byte[], String> function) {
+    private String getRes(byte[] targetData, GCMBlockCipher cipher, Function<byte[], String> function) {
         byte[] output = new byte[cipher.getOutputSize(targetData.length)];
         int code = cipher.processBytes(targetData, 0, targetData.length, output, 0);
 
@@ -47,7 +40,7 @@ public class CryptoTest {
         String key = "1234567891234567";
         String plainText = "abcde";
 
-        BufferedBlockCipher cipher = new CipherWrapper(new AESLightEngine());
+        GCMBlockCipher cipher = new CipherWrapper(new AESLightEngine());
         cipher.init(true, new KeyParameter(key.getBytes()));
 
         String res = getRes(plainText.getBytes(), cipher, this::encodeToString);
@@ -60,7 +53,7 @@ public class CryptoTest {
         String key = "1234567891234567";
         String cipherText = "bkFnddPWV9J6QFsjupZwvg==";
 
-        BufferedBlockCipher cipher = new CipherWrapper(new AESLightEngine());
+        GCMBlockCipher cipher = new CipherWrapper(new AESLightEngine());
         cipher.init(false, new KeyParameter(key.getBytes()));
 
         String res = getRes(Base64.getDecoder().decode(cipherText), cipher, String::new);
@@ -77,7 +70,10 @@ public class CryptoTest {
         KeyGenerator gen = KeyGenerator.getInstance(cipher.getAlgorithmName());
         gen.init(128);
         SecretKey key = gen.generateKey();
-        BufferedBlockCipher cipherWrapper = new CipherWrapper(cipher);
+
+        System.out.println("key: " + encodeToString(key.getEncoded()));
+
+        GCMBlockCipher cipherWrapper = new CipherWrapper(cipher);
         cipherWrapper.init(true, new KeyParameter(key.getEncoded()));
 
         String res = getRes(plainText.getBytes(), cipherWrapper, this::encodeToString);
@@ -88,8 +84,6 @@ public class CryptoTest {
         String resPlain = getRes(Base64.getDecoder().decode(res), cipherWrapper, String::new);
 
         System.out.println("복호화: " + resPlain.trim());
-
-        key.destroy();
     }
 
     @Test

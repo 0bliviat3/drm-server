@@ -1,8 +1,8 @@
 package com.core.drm.crypto.util;
 
-import com.core.drm.crypto.domain.asymmetric.AsymmetricCipher;
-import com.core.drm.crypto.domain.asymmetric.AsymmetricKeyManager;
-import com.core.drm.crypto.domain.cipher.KeyStorage;
+import com.core.drm.crypto.cipher.asymmetric.AsymmetricCipher;
+import com.core.drm.crypto.cipher.asymmetric.AsymmetricKeyManager;
+import com.core.drm.crypto.cipher.KeyStorage;
 import org.bouncycastle.crypto.engines.AESLightEngine;
 
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class FileParserTest {
 
@@ -96,5 +95,4 @@ public class FileParserTest {
         UserDefinedFileAttributeView view = Files.getFileAttributeView(file, UserDefinedFileAttributeView.class);
         assertThat(view.list().contains("encrypt")).isTrue();
     }
-
 }
