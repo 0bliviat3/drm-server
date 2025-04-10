@@ -1,4 +1,4 @@
-package com.core.drm.crypto.domain.cipher;
+package com.core.drm.crypto.cipher;
 
 import com.core.drm.crypto.exception.CipherException;
 import org.bouncycastle.crypto.io.CipherInputStream;

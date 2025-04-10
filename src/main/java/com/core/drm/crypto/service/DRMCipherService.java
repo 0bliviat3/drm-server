@@ -1,23 +1,30 @@
-package com.core.drm.crypto.domain.cipher;
+package com.core.drm.crypto.service;
 
-import com.core.drm.crypto.domain.asymmetric.AsymmetricCipher;
+import com.core.drm.crypto.cipher.asymmetric.AsymmetricCipher;
+import com.core.drm.crypto.cipher.CipherStream;
+import com.core.drm.crypto.cipher.CipherWrapper;
+import com.core.drm.crypto.cipher.KeyStorage;
 import com.core.drm.crypto.util.FileParser;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
 
-public class CipherFile {
+@Service
+public class DRMCipherService {
 
     private final AsymmetricCipher asymmetricCipher;
     private final KeyStorage keyStorage;
 
-    public CipherFile(final AsymmetricCipher asymmetricCipher, final KeyStorage keyStorage) {
+    @Autowired
+    public DRMCipherService(final AsymmetricCipher asymmetricCipher, final KeyStorage keyStorage) {
         this.asymmetricCipher = asymmetricCipher;
         this.keyStorage = keyStorage;
     }

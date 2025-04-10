@@ -1,9 +1,11 @@
-package com.core.drm.crypto.domain.asymmetric;
+package com.core.drm.crypto.cipher.asymmetric;
 
 import com.core.drm.crypto.exception.KeyException;
 import com.core.drm.crypto.util.PropertiesUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.springframework.stereotype.Component;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,12 +21,15 @@ import java.security.spec.X509EncodedKeySpec;
 비대칭 키를 관리하는 클래스
 공개키 로드, 비공개키 로드
  */
+@Slf4j
+@Component
 public class AsymmetricKeyManager {
 
     public AsymmetricKeyManager() {
     }
 
     private byte[] readKey(String type) {
+        log.info("read key");
         String path = PropertiesUtil.getApplicationProperty(type);
         try (PemReader pemReader = new PemReader(new FileReader(path))) {
             PemObject pemObject = pemReader.readPemObject();
@@ -35,6 +40,7 @@ public class AsymmetricKeyManager {
     }
 
     public PublicKey getPublicKey() {
+        log.info("get public key");
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(new X509EncodedKeySpec(readKey("rsa.public.key.path")));
@@ -44,6 +50,7 @@ public class AsymmetricKeyManager {
     }
 
     public PrivateKey getPrivateKey() {
+        log.info("get private key");
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(readKey("rsa.private.key.path")));
