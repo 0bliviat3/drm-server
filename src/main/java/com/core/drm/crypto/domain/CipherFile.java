@@ -7,6 +7,7 @@ import com.core.drm.crypto.exception.FileParserException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
@@ -84,6 +85,25 @@ public class CipherFile {
         } catch (IOException e) {
             throw new FileException("[ERROR] 암호화파일 객체 스트림 변환 에러", e);
         }
+    }
+
+    /*
+    스트리밍 처리를 위해
+    출력스트림으로 변환
+     */
+    public OutputStream getOutputStream() {
+        try {
+            return Files.newOutputStream(file.toPath());
+        } catch (IOException e) {
+            throw new FileException("[ERROR] 암호화파일 객체 스트림 변환 에러", e);
+        }
+    }
+
+    /*
+    파일을 URL로 리턴한다.
+     */
+    public String getURL() {
+        return this.file.getPath();
     }
 
     /*
