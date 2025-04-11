@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,23 +42,48 @@ public class FileUtil {
     }
 
     /*
-    파일 임시 저장
+    파일 임시저장
      */
-    public static String saveTempFile(MultipartFile file) {
+    private static void saveTempFile(String path, byte[] fileData) {
+        try (FileOutputStream outputStream = new FileOutputStream(path)) {
+            outputStream.write(fileData);
+        } catch (IOException e) {
+            throw new FileException("[ERROR] 파일 임시저장 에러", e);
+        }
+    }
+
+    /*
+    파일 임시 저장 (프로퍼티에 저장된 경로 사용)
+    multipartFile
+     */
+    public static String saveTempFile(MultipartFile file, String tempPath) {
         //generate fileName
         String saveFileName = generateFileName(file.getName());
-
         //임시저장 경로 가져오기
-        String tempPath = PropertiesUtil
-                .getApplicationProperty("temp.file.save.path");
+        String filePath = Optional.of(tempPath)
+                .orElse(PropertiesUtil.getApplicationProperty("temp.file.save.path"));
         //임시경로 + 임시파일명으로 저장
-        String fullPath = tempPath + saveFileName;
-        try (FileOutputStream outputStream = new FileOutputStream(fullPath)) {
-            outputStream.write(file.getBytes());
+        String fullPath = filePath + saveFileName;
+
+        try {
+            saveTempFile(fullPath, file.getBytes());
         } catch (IOException e) {
             throw new FileException("[ERROR] 파일 임시저장 에러", e);
         }
         //임시경로 + 임시파일명 리턴
+        return fullPath;
+    }
+
+    /*
+    파일 임시 저장 (프로퍼티에 저장된 경로 사용)
+    byte[]
+     */
+    public static String saveTempFile(byte[] fileData, String fileName, String tempPath) {
+        //임시저장 경로 가져오기
+        String filePath = Optional.of(tempPath)
+                .orElse(PropertiesUtil.getApplicationProperty("temp.file.crypt.path"));
+        String fullPath = filePath + fileName;
+        saveTempFile(fullPath, fileData);
         return fullPath;
     }
 }
