@@ -8,6 +8,6 @@ import com.core.drm.crypto.domain.CipherFile;
  */
 public interface FileStorageService {
 
-    public CipherFile responseFile();
+    public <T> T responseFile(CipherFile cipherFile, Class<T> classType);
 
 }
