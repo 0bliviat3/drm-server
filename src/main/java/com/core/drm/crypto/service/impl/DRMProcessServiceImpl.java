@@ -57,7 +57,7 @@ public class DRMProcessServiceImpl implements DRMProcessService {
             triConsumer.accept(inputStream, outputStream, new AESLightEngine());
             byte[] outputByte = outputStream.toByteArray();
             //처리된 파일 임시저장
-            savePath = FileUtil.saveTempFile(outputByte, file.getName(), null);
+            savePath = FileUtil.saveTempFile(outputByte, file.getOriginalFilename(), null);
             //TODO: DB에도 경로 저장
         } catch (IOException e) {
             throw new CipherException(errMessage, e);
