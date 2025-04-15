@@ -3,6 +3,8 @@ package com.core.drm.crypto.domain;
 import com.core.drm.crypto.exception.CipherException;
 import com.core.drm.crypto.exception.FileException;
 import com.core.drm.crypto.exception.FileParserException;
+import com.core.drm.crypto.util.FileUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
 
 
 /*
@@ -20,6 +21,7 @@ import java.nio.file.attribute.UserDefinedFileAttributeView;
 - 메타데이터 추가
 TODO: 모드에 대해 정의가 필요하다 (암호화전, 암호화후, 복호화전, 복호화후)
  */
+@Slf4j
 public class CipherFile {
 
     private final File file;
@@ -36,23 +38,20 @@ public class CipherFile {
     파일 암복호화 요청에 대해 파일 유효성 체크
      */
     private void validateFile(Path path, String mode) {
-        validateOriginFile(path, mode);
-        validateMetaDataFile(path, mode);
+        if (FileUtil.isOriginFile("encrypt", path)) {
+            validateOriginFile(mode);
+        } else {
+            validateMetaDataFile(path, mode);
+        }
     }
 
     /*
     메타데이터 설정이 되지 않은 원본파일의 경우
     복호화 요청이 오면 에러를 리턴한다.
      */
-    private void validateOriginFile(Path path, String mode) {
-        UserDefinedFileAttributeView view = Files
-                .getFileAttributeView(path, UserDefinedFileAttributeView.class);
-        try {
-            if (view.list().contains("encrypt") && mode.equals("false")) {
-                throw new CipherException("[ERROR] 원본파일 복호화 요청");
-            }
-        } catch (IOException e) {
-            throw new CipherException("[ERROR] 원본파일 검사 오류", e);
+    private void validateOriginFile(String mode) {
+        if (mode.equals("false")) {
+            throw new CipherException("[ERROR] 원본파일 복호화 요청");
         }
     }
 
@@ -111,6 +110,7 @@ public class CipherFile {
      */
     public void setCryptoFlag() {
         //TODO: mode enum 처리
+        log.info("set metadata mode: {}", mode);
         try {
             Files.setAttribute(file.toPath(), "user:encrypt", mode.getBytes());
         } catch (IOException e) {
