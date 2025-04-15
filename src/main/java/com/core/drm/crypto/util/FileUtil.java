@@ -1,14 +1,20 @@
 package com.core.drm.crypto.util;
 
+import com.core.drm.crypto.exception.CipherException;
 import com.core.drm.crypto.exception.FileException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 public class FileUtil {
 
     private FileUtil() {
@@ -20,7 +26,10 @@ public class FileUtil {
      */
     public static String generateFileName(String fileName) {
         String extension = getFileExtension(fileName);
-        return String.format("%s.%s", UUID.randomUUID(), extension);
+        String newFileName = String.format("%s.%s", UUID.randomUUID(), extension);
+        log.info("origin fileName: {}", fileName);
+        log.info("file name: {}", newFileName);
+        return newFileName;
     }
 
     /*
@@ -42,6 +51,20 @@ public class FileUtil {
     }
 
     /*
+    파일 사용자 정의 메타데이터 검사
+     */
+    public static boolean isOriginFile(String metaHeader, Path path) {
+        try {
+            UserDefinedFileAttributeView view = Files
+                    .getFileAttributeView(path, UserDefinedFileAttributeView.class);
+            log.info("view List: {}", view.list().toString());
+            return !view.list().contains(metaHeader);
+        } catch (IOException e) {
+            throw new CipherException("[ERROR] 원본파일 검사 오류", e);
+        }
+    }
+
+    /*
     파일 임시저장
      */
     private static void saveTempFile(String path, byte[] fileData) {
@@ -58,9 +81,9 @@ public class FileUtil {
      */
     public static String saveTempFile(MultipartFile file, String tempPath) {
         //generate fileName
-        String saveFileName = generateFileName(file.getName());
+        String saveFileName = generateFileName(file.getOriginalFilename());
         //임시저장 경로 가져오기
-        String filePath = Optional.of(tempPath)
+        String filePath = Optional.ofNullable(tempPath)
                 .orElse(PropertiesUtil.getApplicationProperty("temp.file.save.path"));
         //임시경로 + 임시파일명으로 저장
         String fullPath = filePath + saveFileName;
@@ -80,7 +103,7 @@ public class FileUtil {
      */
     public static String saveTempFile(byte[] fileData, String fileName, String tempPath) {
         //임시저장 경로 가져오기
-        String filePath = Optional.of(tempPath)
+        String filePath = Optional.ofNullable(tempPath)
                 .orElse(PropertiesUtil.getApplicationProperty("temp.file.crypt.path"));
         String fullPath = filePath + fileName;
         saveTempFile(fullPath, fileData);
