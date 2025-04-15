@@ -3,10 +3,6 @@ package com.core.drm.crypto.util;
 import com.core.drm.crypto.exception.FileParserException;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
 
 public class FileParser {
 
