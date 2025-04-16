@@ -4,6 +4,7 @@ import com.core.drm.crypto.cipher.asymmetric.AsymmetricCipher;
 import com.core.drm.crypto.cipher.CipherStream;
 import com.core.drm.crypto.cipher.CipherWrapper;
 import com.core.drm.crypto.cipher.KeyStorage;
+import com.core.drm.crypto.domain.CipherFileHeader;
 import com.core.drm.crypto.util.FileParser;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
@@ -16,6 +17,8 @@ import javax.crypto.SecretKey;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
+
+import static com.core.drm.crypto.constant.FileHeaderKey.*;
 
 @Service
 public class DRMCipherService {
@@ -45,6 +48,8 @@ public class DRMCipherService {
         return new CipherStream(inputStream, outputStream, wrapper);
     }
 
+
+
     public void encryptFile(InputStream inputStream, OutputStream outputStream, BlockCipher cipher) {
         SecretKey key = keyStorage.generateKey(cipher, 128); //TODO: AES-128사용
         byte[] iv = generateIV();
@@ -52,17 +57,22 @@ public class DRMCipherService {
         CipherConfig cipherConfig = new CipherConfig(true, cipher, key.getEncoded(), iv);
         CipherStream cipherStream = initCipherStream(cipherConfig, inputStream, outputStream);
 
-        FileParser.addKey(outputStream, asymmetricCipher.cryptKey(key));
-        FileParser.addIV(outputStream, iv);
-        FileParser.validateOutputStreamPointer(outputStream, 256 + 12);
+        CipherFileHeader header = FileParser.generateHeader(null, asymmetricCipher.cryptKey(key), iv);
+
+        FileParser.addHeader(outputStream, header);
+
         cipherStream.encrypt();
     }
 
     public void decryptFile(InputStream inputStream, OutputStream outputStream, BlockCipher cipher) {
-        byte[] key = asymmetricCipher.decryptKey(FileParser.parseKey(inputStream));
-        byte[] iv = FileParser.parseIV(inputStream);
+        CipherFileHeader header = FileParser.parseHeader(inputStream);
 
-        CipherConfig cipherConfig = new CipherConfig(false, cipher, key, iv);
+        CipherConfig cipherConfig = new CipherConfig(
+                false,
+                cipher,
+                asymmetricCipher.decryptKey(header.getByte(KEY)),
+                header.getByte(IV)
+        );
         CipherStream cipherStream = initCipherStream(cipherConfig, inputStream, outputStream);
 
         cipherStream.decrypt();
