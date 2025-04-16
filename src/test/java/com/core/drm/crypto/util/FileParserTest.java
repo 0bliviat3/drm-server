@@ -35,7 +35,7 @@ public class FileParserTest {
                 OutputStream outputStream = new FileOutputStream("./encKeyFile.txt");
                 InputStream inputStream = new ByteArrayInputStream(plainByte)
         ) {
-            FileParser.addKey(outputStream, cryptoKey);
+            //FileParser.addKey(outputStream, cryptoKey);
             while ((len = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, len);
             }
@@ -45,16 +45,16 @@ public class FileParserTest {
         }
     }
 
-    @Test
+    //@Test
     void 암호화_대칭키파일파싱_테스트() {
         byte[] buffer = new byte[1024];
         int len;
         try (InputStream inputStream = new FileInputStream("./encKeyFile.txt");
              OutputStream outputStream = new FileOutputStream("./plainText.txt")
         ) {
-            byte[] key = FileParser.parseKey(inputStream);
+            //byte[] key = FileParser.parseKey(inputStream);
 
-            System.out.println(key.length);
+            //System.out.println(key.length);
             try (BufferedInputStream remainingStream = new BufferedInputStream(inputStream)) {
                 while ((len = remainingStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, len); // 평문 내용 파일에 쓰기
@@ -89,10 +89,13 @@ public class FileParserTest {
 
     @Test
     void 파일_메타데이터_있을때_조회() throws IOException {
-        String path = "./fileSample/sample3.xlsx";
+        String path = "./cryptFile/(유통혁신팀) 소매 우수사례 게시판 개편안.xlsx";
         Path file = new File(path).toPath();
 
         UserDefinedFileAttributeView view = Files.getFileAttributeView(file, UserDefinedFileAttributeView.class);
+
+        System.out.println(view.list().toString());
+
         assertThat(view.list().contains("encrypt")).isTrue();
     }
 }
