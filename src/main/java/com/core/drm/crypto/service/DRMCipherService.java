@@ -48,19 +48,16 @@ public class DRMCipherService {
         return new CipherStream(inputStream, outputStream, wrapper);
     }
 
-
-
     public void encryptFile(InputStream inputStream, OutputStream outputStream, BlockCipher cipher) {
         SecretKey key = keyStorage.generateKey(cipher, 128); //TODO: AES-128사용
         byte[] iv = generateIV();
-
-        CipherConfig cipherConfig = new CipherConfig(true, cipher, key.getEncoded(), iv);
-        CipherStream cipherStream = initCipherStream(cipherConfig, inputStream, outputStream);
 
         CipherFileHeader header = FileParser.generateHeader(null, asymmetricCipher.cryptKey(key), iv);
 
         FileParser.addHeader(outputStream, header);
 
+        CipherConfig cipherConfig = new CipherConfig(true, cipher, key.getEncoded(), iv);
+        CipherStream cipherStream = initCipherStream(cipherConfig, inputStream, outputStream);
         cipherStream.encrypt();
     }
 
