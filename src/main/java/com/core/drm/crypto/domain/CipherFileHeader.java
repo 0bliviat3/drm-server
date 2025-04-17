@@ -3,12 +3,15 @@ package com.core.drm.crypto.domain;
 import com.core.drm.crypto.constant.FileHeaderKey;
 import com.core.drm.crypto.exception.FileHeaderException;
 import com.core.drm.crypto.util.PropertiesUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@Slf4j
 public class CipherFileHeader {
 
     /* 순서보장을 위해 linked hash map 사용 */
@@ -30,7 +33,8 @@ public class CipherFileHeader {
      */
     private void validateSign(Map<FileHeaderKey, byte[]> headers) {
         String originSign = PropertiesUtil.getApplicationProperty("drm.header.signature");
-        if (!Arrays.equals(headers.get(FileHeaderKey.KEY), originSign.getBytes())) {
+        log.debug("input sign: {}, origin sign: {}", new String(headers.get(FileHeaderKey.SIGNATURE)), originSign);
+        if (!Arrays.equals(headers.get(FileHeaderKey.SIGNATURE), originSign.getBytes(StandardCharsets.UTF_8))) {
             throw new FileHeaderException("[ERROR] 시그니처 불일치");
         }
     }
