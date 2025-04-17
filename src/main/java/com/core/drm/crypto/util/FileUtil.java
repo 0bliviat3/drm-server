@@ -51,20 +51,6 @@ public class FileUtil {
     }
 
     /*
-    파일 사용자 정의 메타데이터 검사
-     */
-    public static boolean isOriginFile(String metaHeader, Path path) {
-        try {
-            UserDefinedFileAttributeView view = Files
-                    .getFileAttributeView(path, UserDefinedFileAttributeView.class);
-            log.info("view List: {}", view.list().toString());
-            return !view.list().contains(metaHeader);
-        } catch (IOException e) {
-            throw new CipherException("[ERROR] 원본파일 검사 오류", e);
-        }
-    }
-
-    /*
     파일 임시저장
      */
     private static void saveTempFile(String path, byte[] fileData) {
