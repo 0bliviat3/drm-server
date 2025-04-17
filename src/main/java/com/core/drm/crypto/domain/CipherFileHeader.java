@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static com.core.drm.crypto.constant.errormessage.FileHeaderExceptionMessage.*;
+
 @Slf4j
 public class CipherFileHeader {
 
@@ -35,7 +37,7 @@ public class CipherFileHeader {
         String originSign = PropertiesUtil.getApplicationProperty("drm.header.signature");
         log.debug("input sign: {}, origin sign: {}", new String(headers.get(FileHeaderKey.SIGNATURE)), originSign);
         if (!Arrays.equals(headers.get(FileHeaderKey.SIGNATURE), originSign.getBytes(StandardCharsets.UTF_8))) {
-            throw new FileHeaderException("[ERROR] 시그니처 불일치");
+            throw new FileHeaderException(INVALID_SIGN);
         }
     }
 
@@ -46,7 +48,7 @@ public class CipherFileHeader {
         List<FileHeaderKey> keyList = new ArrayList<>(headers.keySet());
         List<FileHeaderKey> originKeys = List.of(FileHeaderKey.values());
         if (!originKeys.equals(keyList)) {
-            throw new FileHeaderException("[ERROR] 헤더 순서 불일치");
+            throw new FileHeaderException(INVALID_HEADER_ORDER);
         }
     }
 
@@ -61,7 +63,7 @@ public class CipherFileHeader {
                 .filter(key -> compareKeySize(key,headers))
                 .count();
         if (cnt != headers.size()) {
-            throw new FileHeaderException("[ERROR] 헤더 검증 에러: 유효한 헤더수가 일치 하지 않습니다.");
+            throw new FileHeaderException(INVALID_HEADER_COUNT);
         }
     }
 
@@ -77,7 +79,7 @@ public class CipherFileHeader {
             this.headers.values().forEach(bytes -> write(outputStream, bytes));
             return outputStream.toByteArray();
         } catch (IOException e) {
-            throw new FileHeaderException("[ERROR] 파일 헤더 병합 에러", e);
+            throw new FileHeaderException(FAIL_MERGE, e);
         }
 
     }
@@ -86,7 +88,7 @@ public class CipherFileHeader {
         try {
             outputStream.write(bytes);
         } catch (IOException e) {
-            throw new FileHeaderException("[ERROR] 파일 헤더 스트림 작성 에러", e);
+            throw new FileHeaderException(FAIL_WRITE_STREAM, e);
         }
     }
 
