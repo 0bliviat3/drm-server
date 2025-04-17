@@ -1,5 +1,6 @@
 package com.core.drm.crypto.service.impl;
 
+import com.core.drm.crypto.constant.errormessage.CipherExceptionMessage;
 import com.core.drm.crypto.domain.TempFile;
 import com.core.drm.crypto.exception.CipherException;
 import com.core.drm.crypto.service.DRMCipherService;
@@ -17,6 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
+import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.FAIL_DECRYPT;
+import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.FAIL_ENCRYPT;
+
 @Slf4j
 @Service
 public class DRMProcessServiceImpl implements DRMProcessService {
@@ -33,18 +37,18 @@ public class DRMProcessServiceImpl implements DRMProcessService {
 
     @Override
     public InputStream encryptFile(MultipartFile file) {
-        return cryptProcess(file, true, "[ERROR] 암호화 오류", drmCipherService::encryptFile);
+        return cryptProcess(file, true, FAIL_ENCRYPT, drmCipherService::encryptFile);
     }
 
     @Override
     public InputStream decryptFile(MultipartFile file) {
-        return cryptProcess(file, false, "[ERROR] 복호화 오류", drmCipherService::decryptFile);
+        return cryptProcess(file, false, FAIL_DECRYPT, drmCipherService::decryptFile);
     }
 
     private InputStream cryptProcess(
             MultipartFile file,
             boolean isEncrypt,
-            String errMessage,
+            CipherExceptionMessage errMessage,
             TriConsumer<InputStream, OutputStream, BlockCipher> triConsumer) {
         //파일 임시저장
         String savePath = FileUtil.saveTempFile(file, null);

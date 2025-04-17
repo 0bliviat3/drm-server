@@ -13,6 +13,9 @@ import javax.crypto.SecretKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.FAIL_DECRYPT_KEY;
+import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.FAIL_ENCRYPT_KEY;
+
 /*
 비대칭키를 사용한 암복호화 클래스
  */
@@ -43,7 +46,7 @@ public class AsymmetricCipher {
             return cipher.doFinal();
         } catch (InvalidCipherTextException e) {
             log.error("cipher exception: {}", e.getMessage());
-            throw new CipherException("[ERROR] 대칭키 비대칭 암호화 실패", e);
+            throw new CipherException(FAIL_ENCRYPT_KEY, e);
         }
     }
 
@@ -61,7 +64,7 @@ public class AsymmetricCipher {
         try {
             return cipher.doFinal();
         } catch (InvalidCipherTextException e) {
-            throw new CipherException("[ERROR] 대칭키 비대칭 복호화 실패", e);
+            throw new CipherException(FAIL_DECRYPT_KEY, e);
         }
     }
 

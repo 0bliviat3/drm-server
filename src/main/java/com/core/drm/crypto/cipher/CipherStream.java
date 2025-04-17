@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.*;
+
 /*
  * 스트림을 암복호화 처리함
  * 파라미터로 스트림을 전달 받아 암복호화된 스트림의 해제까지 관리
@@ -39,13 +41,13 @@ public class CipherStream implements Closeable {
 
     private void validateStream(InputStream inputStream, OutputStream outputStream) {
         if (inputStream == null || outputStream == null) {
-            throw new CipherException("[ERROR] 입출력 스트림이 초기화되지 않음");
+            throw new CipherException(FAIL_INIT_STREAM);
         }
     }
 
     private void validateCipher(CipherWrapper cipher) {
         if (!cipher.isInitCipher()) {
-            throw new CipherException("[ERROR] cipher 객체가 초기화되지 않음");
+            throw new CipherException(FAIL_INIT_CIPHER);
         }
     }
 
@@ -61,7 +63,7 @@ public class CipherStream implements Closeable {
             }
             cipherOutputStream.flush();
         } catch (IOException e) {
-            throw new CipherException("[ERROR] 파일 암호화 오류", e);
+            throw new CipherException(FAIL_ENCRYPT, e);
         }
 
     }
@@ -79,7 +81,7 @@ public class CipherStream implements Closeable {
 
             outputStream.flush();
         } catch (IOException e) {
-            throw new CipherException("[ERROR] 파일 복호화 오류", e);
+            throw new CipherException(FAIL_DECRYPT, e);
         }
     }
 
