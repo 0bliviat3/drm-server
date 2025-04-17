@@ -1,6 +1,6 @@
 package com.core.drm.crypto.service;
 
-import com.core.drm.crypto.domain.CipherFile;
+import com.core.drm.crypto.domain.TempFile;
 
 /*
 리턴을 스트리밍 방식으로 처리할지
@@ -8,6 +8,6 @@ import com.core.drm.crypto.domain.CipherFile;
  */
 public interface FileStorageService {
 
-    public <T> T responseFile(CipherFile cipherFile, Class<T> classType);
+    public <T> T responseFile(TempFile cipherFile, Class<T> classType);
 
 }
