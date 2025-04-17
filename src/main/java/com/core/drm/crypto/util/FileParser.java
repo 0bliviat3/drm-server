@@ -3,23 +3,31 @@ package com.core.drm.crypto.util;
 import com.core.drm.crypto.constant.FileHeaderKey;
 import com.core.drm.crypto.domain.CipherFileHeader;
 import com.core.drm.crypto.exception.FileParserException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
 import static com.core.drm.crypto.constant.FileHeaderKey.*;
 
+@Slf4j
 public class FileParser {
 
     private FileParser() {
     }
 
     public static CipherFileHeader generateHeader(byte[] sign, byte[] key, byte[] iv) {
-        sign = Optional.ofNullable(sign)
-                .orElse(PropertiesUtil.getApplicationProperty("drm.header.signature").getBytes());
+        byte[] originSign = Optional.ofNullable(sign)
+                .orElse(
+                        PropertiesUtil
+                                .getApplicationProperty("drm.header.signature")
+                                .getBytes(StandardCharsets.UTF_8)
+                );
+        log.debug("sign: {}", new String(originSign));
         LinkedHashMap<FileHeaderKey, byte[]> header = new LinkedHashMap<>();
-        header.put(SIGNATURE, sign);
+        header.put(SIGNATURE, originSign);
         header.put(KEY, key);
         header.put(IV, iv);
 
@@ -56,7 +64,7 @@ public class FileParser {
     /*
     시그니처 파싱
      */
-    private static byte[] parseSign(InputStream inputFileStream) {
+    public static byte[] parseSign(InputStream inputFileStream) {
         byte[] sign = new byte[12]; // 12byte 고정
 
         try {
