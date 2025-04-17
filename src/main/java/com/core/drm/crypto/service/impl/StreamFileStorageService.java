@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 
+import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.WRONG_RETURN_TYPE;
+
 @Service
 public class StreamFileStorageService implements FileStorageService {
 
@@ -15,7 +17,6 @@ public class StreamFileStorageService implements FileStorageService {
         if (classType.equals(InputStream.class)) {
             return classType.cast(cipherFile.getInputStream());
         }
-        throw new FileException(
-                String.format("[ERROR] 리턴타입 에러: 입력스트림을 기대하나 %s 으로 지정함", classType.getName()));
+        throw new FileException(WRONG_RETURN_TYPE, classType.getName());
     }
 }

@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
+import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.FAIL_CONVERT_STREAM;
+import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.NOT_EXISTS;
+
 
 /*
 암복호화 처리할 파일 -> 임시저장된 파일
@@ -46,7 +49,7 @@ public class TempFile {
      */
     private void validateFile(File file) {
         if (!file.exists()) {
-            throw new FileException("[ERROR] 파일이 존재하지 않습니다.");
+            throw new FileException(NOT_EXISTS);
         }
     }
 
@@ -58,7 +61,7 @@ public class TempFile {
         try {
             return Files.newInputStream(file.toPath());
         } catch (IOException e) {
-            throw new FileException("[ERROR] 암호화파일 객체 스트림 변환 에러", e);
+            throw new FileException(FAIL_CONVERT_STREAM, e);
         }
     }
 
@@ -70,7 +73,7 @@ public class TempFile {
         try {
             return Files.newOutputStream(file.toPath());
         } catch (IOException e) {
-            throw new FileException("[ERROR] 암호화파일 객체 스트림 변환 에러", e);
+            throw new FileException(FAIL_CONVERT_STREAM, e);
         }
     }
 

@@ -14,6 +14,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.FAIL_TAMP_SAVE;
+import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.NOT_SUPPORT_EXTENSION;
+
 @Slf4j
 public class FileUtil {
 
@@ -46,7 +49,7 @@ public class FileUtil {
      */
     public static void validateFileExtension(String fileExtension, Set<String> whiteList) {
         if (!whiteList.contains(fileExtension)) {
-            throw new FileException(String.format("[ERROR] %s는 확장자 화이트리스트에 없습니다.", fileExtension));
+            throw new FileException(NOT_SUPPORT_EXTENSION, fileExtension);
         }
     }
 
@@ -57,7 +60,7 @@ public class FileUtil {
         try (FileOutputStream outputStream = new FileOutputStream(path)) {
             outputStream.write(fileData);
         } catch (IOException e) {
-            throw new FileException("[ERROR] 파일 임시저장 에러", e);
+            throw new FileException(FAIL_TAMP_SAVE, e);
         }
     }
 
@@ -77,7 +80,7 @@ public class FileUtil {
         try {
             saveTempFile(fullPath, file.getBytes());
         } catch (IOException e) {
-            throw new FileException("[ERROR] 파일 임시저장 에러", e);
+            throw new FileException(FAIL_TAMP_SAVE, e);
         }
         //임시경로 + 임시파일명 리턴
         return fullPath;
