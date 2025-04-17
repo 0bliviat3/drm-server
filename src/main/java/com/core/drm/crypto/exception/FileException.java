@@ -15,6 +15,7 @@ public class FileException extends IllegalArgumentException {
     }
 
     public FileException(FileExceptionMessage message, Throwable cause) {
+        super(message.getMessage());
         log.error("file exception: {}, cause: {}", message.getMessage(), cause.getMessage());
     }
 
