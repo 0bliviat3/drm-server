@@ -52,7 +52,7 @@ public class DRMProcessServiceImpl implements DRMProcessService {
             TriConsumer<InputStream, OutputStream, BlockCipher> triConsumer) {
         //파일 임시저장
         String savePath = FileUtil.saveTempFile(file, null);
-        //TODO: DB에도 경로 저장
+        //TODO: DB에도 경로, 원본이름 저장
         //임시저장파일 도메인 생성
         TempFile tempFile = new TempFile(savePath);
         //임시파일 암복호화 정합성 검사
