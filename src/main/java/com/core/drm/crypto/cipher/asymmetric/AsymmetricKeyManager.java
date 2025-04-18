@@ -17,6 +17,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import static com.core.drm.crypto.constant.errormessage.KeyExceptionMessage.*;
+
 /*
 비대칭 키를 관리하는 클래스
 공개키 로드, 비공개키 로드
@@ -35,7 +37,7 @@ public class AsymmetricKeyManager {
             PemObject pemObject = pemReader.readPemObject();
             return pemObject.getContent();
         } catch (IOException e) {
-            throw new KeyException("[ERROR] pem 파일 읽기 실패!, 파일경로: " + path, e);
+            throw new KeyException(FAIL_PEM_LOAD, e, path);
         }
     }
 
@@ -45,7 +47,7 @@ public class AsymmetricKeyManager {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(new X509EncodedKeySpec(readKey("rsa.public.key.path")));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            throw new KeyException("[ERROR] 공개키 발행 실패", e);
+            throw new KeyException(FAIL_GENERATE_PUBLIC_KEY, e);
         }
     }
 
@@ -55,7 +57,7 @@ public class AsymmetricKeyManager {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(readKey("rsa.private.key.path")));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            throw new KeyException("[ERROR] 개인키 발생 실패", e);
+            throw new KeyException(FAIL_GENERATE_PRIVATE_KEY, e);
         }
     }
 

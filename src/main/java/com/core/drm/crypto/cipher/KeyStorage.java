@@ -10,6 +10,8 @@ import javax.crypto.SecretKey;
 import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 
+import static com.core.drm.crypto.constant.errormessage.KeyExceptionMessage.FAIL_GENERATE_KEY;
+
 @Slf4j
 @Component
 public class KeyStorage {
@@ -22,7 +24,7 @@ public class KeyStorage {
             log.info("Generator {} key", algorithm);
             return gen.generateKey();
         } catch (InvalidParameterException | NoSuchAlgorithmException e) {
-            throw new KeyException("[ERROR] 대칭키 생성 오류", e);
+            throw new KeyException(FAIL_GENERATE_KEY, e);
         }
     }
 

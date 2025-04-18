@@ -1,5 +1,6 @@
 package com.core.drm.crypto.exception;
 
+import com.core.drm.crypto.constant.errormessage.KeyExceptionMessage;
 import lombok.extern.slf4j.Slf4j;
 
 /*
@@ -13,14 +14,26 @@ public class KeyException extends IllegalStateException{
     public KeyException() {
     }
 
-    public KeyException(String message) {
-        //TODO: string message로 받을게 아닌 ENUM을 적용해 예외 메세지를 구분한다.
-        super(message);
-        log.error("KeyException: {}", message);
+    public KeyException(KeyExceptionMessage message) {
+        super(message.getMessage());
+        log.error("KeyException: {}", message.getMessage());
     }
 
-    public KeyException(String message, Throwable cause) {
-        log.error("KeyException: {}, cause: {}", message, cause.getMessage());
+    public KeyException(KeyExceptionMessage message, Throwable cause) {
+        super(message.getMessage());
+        log.error("KeyException: {}, cause: {}", message.getMessage(), cause.getMessage());
+    }
+
+    public KeyException(KeyExceptionMessage message, Object... formatArgs) {
+        super(String.format(message.getMessage(), formatArgs));
+        String formatMsg = String.format(message.getMessage(), formatArgs);
+        log.error("KeyException: {}", formatMsg);
+    }
+
+    public KeyException(KeyExceptionMessage message, Throwable cause, Object... formatArgs) {
+        super(String.format(message.getMessage(), formatArgs));
+        String formatMsg = String.format(message.getMessage(), formatArgs);
+        log.error("KeyException: {}, cause: {}", formatMsg, cause.getMessage());
     }
 
 }
