@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 암복호화 과정중 발생하는 예외
  */
 @Slf4j
-public class CipherException extends IllegalStateException {
+public class CipherException extends IllegalArgumentException {
 
     public CipherException() {
     }
