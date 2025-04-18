@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Optional;
 
 import static com.core.drm.crypto.constant.FileHeaderKey.*;
+import static com.core.drm.crypto.constant.errormessage.FileParserExceptionMessage.*;
 
 @Slf4j
 public class FileParser {
@@ -49,7 +50,7 @@ public class FileParser {
                 outputStream.write(buffer, 0, readLength);
             }
         } catch (IOException e) {
-            throw new FileParserException("[ERROR] 헤더 추가 에러", e);
+            throw new FileParserException(FAIL_ADD_HEADER, e);
         }
     }
 
@@ -71,7 +72,7 @@ public class FileParser {
             inputFileStream.read(sign); /* read sign */
             return sign;
         } catch (IOException e) {
-            throw new FileParserException("[ERROR] 시그니처 파싱에러", e);
+            throw new FileParserException(FAIL_SIGN_PARSE, e);
         }
     }
 
@@ -89,7 +90,7 @@ public class FileParser {
             inputFileStream.read(cryptoKey); /* read crypto key */
             return cryptoKey;
         } catch (IOException e) {
-            throw new FileParserException("[ERROR] 키 파싱에러", e);
+            throw new FileParserException(FAIL_KEY_PARSE, e);
         }
     }
 
@@ -105,7 +106,7 @@ public class FileParser {
 
             return iv;
         } catch (IOException e) {
-            throw new FileParserException("[ERROR] iv 파싱에러", e);
+            throw new FileParserException(FAIL_IV_PARSE, e);
         }
     }
 }
