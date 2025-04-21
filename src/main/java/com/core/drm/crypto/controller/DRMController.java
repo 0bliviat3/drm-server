@@ -26,10 +26,7 @@ public class DRMController {
         this.drmProcessService = drmProcessService;
     }
 
-    @PostMapping(
-            value = "/enc/file",
-            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
-    )
+    @PostMapping(value = "/enc/file")
     public ResponseEntity<InputStreamResource> encryptFile(MultipartFile file) {
         InputStream inputStream = drmProcessService.encryptFile(file);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
@@ -40,10 +37,7 @@ public class DRMController {
                 .body(inputStreamResource);
     }
 
-    @PostMapping(
-            value = "/dec/file",
-            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
-    )
+    @PostMapping(value = "/dec/file")
     public ResponseEntity<InputStreamResource> decryptFile(MultipartFile file) {
         InputStream inputStream = drmProcessService.decryptFile(file);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
