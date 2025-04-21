@@ -38,16 +38,8 @@ public class DRMExceptionService {
     }
 
     private ResponseMessage checkExceptionType(Exception exception) {
-        if (exception instanceof CipherException) {
-            return ABOUT_CIPHER;
-        } else if (exception instanceof FileException) {
-            return ABOUT_FILE;
-        } else if (exception instanceof FileHeaderException) {
-            return ABOUT_FILE_HEADER;
-        } else if (exception instanceof FileParserException) {
-            return ABOUT_FILE_PARSER;
-        } else if (exception instanceof KeyException) {
-            return ABOUT_KEY;
+        if (exception instanceof DRMException drmException) {
+            return drmException.getResponseMessage();
         }
         return UNCHECKED_EXCEPTION;
     }
