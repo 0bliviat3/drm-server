@@ -1,19 +1,15 @@
 package com.core.drm.crypto.service;
 
 import com.core.drm.crypto.constant.errormessage.ResponseMessage;
-import com.core.drm.crypto.dto.ExceptionResponse;
+import com.core.drm.crypto.dto.FileExceptionResponse;
 import com.core.drm.crypto.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static com.core.drm.crypto.constant.errormessage.ResponseMessage.*;
 
@@ -23,23 +19,19 @@ public class DRMExceptionService {
 
     //TODO: DB 서비스 추가
 
-    public ExceptionResponse wrapException(Exception exception) {
+    public FileExceptionResponse wrapException(Exception exception, HttpServletRequest request) {
         String eventTime = String.valueOf(LocalDateTime.now());
         ResponseMessage responseMessage = checkExceptionType(exception);
-        String fileName = getCurrentRequestFileName();
+        String fileName = getCurrentRequestFileName(request);
 
-        return new ExceptionResponse(eventTime, responseMessage.getCode(), responseMessage.getMessage(), fileName);
+        return new FileExceptionResponse(eventTime, responseMessage.getCode(), responseMessage.getMessage(), fileName);
     }
 
-    private String getCurrentRequestFileName() { //TODO: 테스트 해본 결과 요청은 찾아오지만 multipartRep 는 아님
-        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
-        HttpServletRequest request = attrs.getRequest();
-
-        log.debug("req = {}", request.getRequestURI());
-
-        if (request instanceof MultipartHttpServletRequest multipartRequest) {
-            log.debug("현재 요청 가져옴!");
+    private String getCurrentRequestFileName(HttpServletRequest request) {
+        log.debug("req = {}, content-type = {}", request.getRequestURI(), request.getContentType());
+        StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
+        if (resolver.isMultipart(request)) {
+            MultipartHttpServletRequest multipartRequest = resolver.resolveMultipart(request);
             return multipartRequest.getFile("file").getOriginalFilename();
         }
         return "no file";
