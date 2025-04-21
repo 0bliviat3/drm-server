@@ -1,13 +1,16 @@
 package com.core.drm.crypto.exception;
 
 import com.core.drm.crypto.constant.errormessage.FileParserExceptionMessage;
+import com.core.drm.crypto.constant.errormessage.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.core.drm.crypto.constant.errormessage.ResponseMessage.ABOUT_FILE_PARSER;
 
 /*
 파일 파싱 관련 예외
  */
 @Slf4j
-public class FileParserException extends IllegalStateException {
+public class FileParserException extends IllegalStateException implements DRMException{
 
     public FileParserException() {
     }
@@ -34,4 +37,8 @@ public class FileParserException extends IllegalStateException {
         log.error("File parse exception: {}, cause: {}", formatMsg, cause.getMessage());
     }
 
+    @Override
+    public ResponseMessage getResponseMessage() {
+        return ABOUT_FILE_PARSER;
+    }
 }

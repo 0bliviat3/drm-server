@@ -1,7 +1,10 @@
 package com.core.drm.crypto.exception;
 
 import com.core.drm.crypto.constant.errormessage.KeyExceptionMessage;
+import com.core.drm.crypto.constant.errormessage.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.core.drm.crypto.constant.errormessage.ResponseMessage.ABOUT_KEY;
 
 /*
 키 관련 발생 가능한 예외
@@ -9,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 외부용 예외는 전역예외처리기를 사용한다.
  */
 @Slf4j
-public class KeyException extends IllegalStateException{
+public class KeyException extends IllegalStateException implements DRMException {
 
     public KeyException() {
     }
@@ -36,4 +39,8 @@ public class KeyException extends IllegalStateException{
         log.error("KeyException: {}, cause: {}", formatMsg, cause.getMessage());
     }
 
+    @Override
+    public ResponseMessage getResponseMessage() {
+        return ABOUT_KEY;
+    }
 }

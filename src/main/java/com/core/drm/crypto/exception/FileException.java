@@ -1,10 +1,13 @@
 package com.core.drm.crypto.exception;
 
 import com.core.drm.crypto.constant.errormessage.FileExceptionMessage;
+import com.core.drm.crypto.constant.errormessage.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.core.drm.crypto.constant.errormessage.ResponseMessage.ABOUT_FILE;
+
 @Slf4j
-public class FileException extends IllegalArgumentException {
+public class FileException extends IllegalArgumentException implements DRMException{
 
     public FileException() {
     }
@@ -31,4 +34,8 @@ public class FileException extends IllegalArgumentException {
         log.error("file exception: {}, cause: {}", formatMsg, cause.getMessage());
     }
 
+    @Override
+    public ResponseMessage getResponseMessage() {
+        return ABOUT_FILE;
+    }
 }
