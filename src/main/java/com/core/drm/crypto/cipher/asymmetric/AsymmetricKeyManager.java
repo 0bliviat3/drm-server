@@ -3,6 +3,9 @@ package com.core.drm.crypto.cipher.asymmetric;
 import com.core.drm.crypto.exception.KeyException;
 import com.core.drm.crypto.util.PropertiesUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.jcajce.provider.asymmetric.RSA;
+import org.bouncycastle.math.ec.rfc8032.Ed25519;
+import org.bouncycastle.math.ec.rfc8032.Ed448;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.springframework.stereotype.Component;
@@ -30,6 +33,10 @@ public class AsymmetricKeyManager {
     public AsymmetricKeyManager() {
     }
 
+    private static final String ASYMMETRIC_ALGORITHM = "RSA";
+    private static final String PUBLIC_KEY_PROPERTY = "rsa.public.key.path";
+    private static final String PRIVATE_KEY_PROPERTY = "rsa.private.key.path";
+
     private byte[] readKey(String type) {
         log.info("read key");
         String path = PropertiesUtil.getApplicationProperty(type);
@@ -44,8 +51,8 @@ public class AsymmetricKeyManager {
     public PublicKey getPublicKey() {
         log.info("get public key");
         try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            return keyFactory.generatePublic(new X509EncodedKeySpec(readKey("rsa.public.key.path")));
+            KeyFactory keyFactory = KeyFactory.getInstance(ASYMMETRIC_ALGORITHM);
+            return keyFactory.generatePublic(new X509EncodedKeySpec(readKey(PUBLIC_KEY_PROPERTY)));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             throw new KeyException(FAIL_GENERATE_PUBLIC_KEY, e);
         }
@@ -54,8 +61,8 @@ public class AsymmetricKeyManager {
     public PrivateKey getPrivateKey() {
         log.info("get private key");
         try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(readKey("rsa.private.key.path")));
+            KeyFactory keyFactory = KeyFactory.getInstance(ASYMMETRIC_ALGORITHM);
+            return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(readKey(PRIVATE_KEY_PROPERTY)));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             throw new KeyException(FAIL_GENERATE_PRIVATE_KEY, e);
         }
