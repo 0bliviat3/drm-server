@@ -15,6 +15,7 @@ public enum ResponseMessage {
     ABOUT_FILE_HEADER("파일 헤더 오류", "D903"),
     ABOUT_FILE_PARSER("파일 파싱 오류", "D904"),
     ABOUT_KEY("암복호화 키 오류", "D905"),
+    ABOUT_PROPERTY("프로퍼티 오류", "D906"),
     UNCHECKED_EXCEPTION("미분류 오류", "D1000")
     ;
 
