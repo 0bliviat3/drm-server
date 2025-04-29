@@ -19,11 +19,14 @@ public class FileParser {
     private FileParser() {
     }
 
+    private static final String SIGN_PROPERTY = "drm.header.signature";
+    private static final int BUFFER_SIZE = 1024;
+
     public static CipherFileHeader generateHeader(byte[] sign, byte[] key, byte[] iv) {
         byte[] originSign = Optional.ofNullable(sign)
                 .orElse(
                         PropertiesUtil
-                                .getApplicationProperty("drm.header.signature")
+                                .getApplicationProperty(SIGN_PROPERTY)
                                 .getBytes(StandardCharsets.UTF_8)
                 );
         log.debug("sign: {}", new String(originSign));
@@ -40,7 +43,7 @@ public class FileParser {
      */
     public static void addHeader(OutputStream outputStream, CipherFileHeader header) {
         byte[] headerBytes = header.getBytes();
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[BUFFER_SIZE];
         int readLength;
         try (
                 BufferedInputStream keyStream =
@@ -66,7 +69,7 @@ public class FileParser {
     시그니처 파싱
      */
     public static byte[] parseSign(InputStream inputFileStream) {
-        byte[] sign = new byte[12]; // 12byte 고정
+        byte[] sign = new byte[SIGNATURE.getLength()]; // 12byte 고정
 
         try {
             inputFileStream.read(sign); /* read sign */
@@ -84,7 +87,7 @@ public class FileParser {
      * 스트림 닫지 않음
      */
     private static byte[] parseKey(InputStream inputFileStream) {
-        byte[] cryptoKey = new byte[256]; // 2048비트 고정
+        byte[] cryptoKey = new byte[KEY.getLength()]; // 2048비트 고정
 
         try {
             inputFileStream.read(cryptoKey); /* read crypto key */
@@ -99,7 +102,7 @@ public class FileParser {
     키 파싱 이후 IV 파싱
      */
     private static byte[] parseIV(InputStream inputFileStream) {
-        byte[] iv = new byte[12]; // 96bit
+        byte[] iv = new byte[IV.getLength()]; // 96bit
 
         try {
             inputFileStream.read(iv); /* read crypto key */
