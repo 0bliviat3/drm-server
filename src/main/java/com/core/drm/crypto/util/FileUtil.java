@@ -20,6 +20,10 @@ import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.NOT
 @Slf4j
 public class FileUtil {
 
+    private static final String TEMP_FILE_SRC = "temp.file.save.path";
+    private static final String TEMP_CRYPTO_FILE_SRC = "temp.file.crypt.path";
+
+
     private FileUtil() {
     }
 
@@ -73,7 +77,7 @@ public class FileUtil {
         String saveFileName = generateFileName(file.getOriginalFilename());
         //임시저장 경로 가져오기
         String filePath = Optional.ofNullable(tempPath)
-                .orElse(PropertiesUtil.getApplicationProperty("temp.file.save.path"));
+                .orElse(PropertiesUtil.getApplicationProperty(TEMP_FILE_SRC));
         //임시경로 + 임시파일명으로 저장
         String fullPath = filePath + saveFileName;
 
@@ -93,7 +97,7 @@ public class FileUtil {
     public static String saveTempFile(byte[] fileData, String fileName, String tempPath) {
         //임시저장 경로 가져오기
         String filePath = Optional.ofNullable(tempPath)
-                .orElse(PropertiesUtil.getApplicationProperty("temp.file.crypt.path"));
+                .orElse(PropertiesUtil.getApplicationProperty(TEMP_CRYPTO_FILE_SRC));
         String fullPath = filePath + fileName;
         saveTempFile(fullPath, fileData);
         return fullPath;
