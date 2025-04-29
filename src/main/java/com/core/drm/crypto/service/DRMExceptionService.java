@@ -32,7 +32,7 @@ public class DRMExceptionService {
         StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
         if (resolver.isMultipart(request)) {
             MultipartHttpServletRequest multipartRequest = resolver.resolveMultipart(request);
-            return multipartRequest.getFile("file").getOriginalFilename();
+            return multipartRequest.getFile("sourceFile").getOriginalFilename();
         }
         return "no file";
     }

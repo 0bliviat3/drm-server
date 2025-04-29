@@ -7,8 +7,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -27,7 +26,7 @@ public class DRMController {
     }
 
     @PostMapping(value = "/enc/file")
-    public ResponseEntity<InputStreamResource> encryptFile(MultipartFile file) {
+    public ResponseEntity<InputStreamResource> encryptFile(@RequestParam("sourceFile") MultipartFile file) {
         InputStream inputStream = drmProcessService.encryptFile(file);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
         String encodeFileName = URLEncoder.encode(file.getOriginalFilename(), StandardCharsets.UTF_8);
@@ -38,7 +37,7 @@ public class DRMController {
     }
 
     @PostMapping(value = "/dec/file")
-    public ResponseEntity<InputStreamResource> decryptFile(MultipartFile file) {
+    public ResponseEntity<InputStreamResource> decryptFile(@RequestParam("sourceFile") MultipartFile file) {
         InputStream inputStream = drmProcessService.decryptFile(file);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
         String encodeFileName = URLEncoder.encode(file.getOriginalFilename(), StandardCharsets.UTF_8);
