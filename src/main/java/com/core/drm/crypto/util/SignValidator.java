@@ -6,17 +6,18 @@ import com.core.drm.crypto.exception.CipherException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.IMPOSSIBLE_TRY;
-import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.INVALID_SIGN;
+import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.*;
 
 public class SignValidator {
 
     private SignValidator() {
     }
 
+    private static final String SIGN_PROPERTY = "drm.header.signature";
+
     public static void validateSign(TempFile file, boolean isEncrypt) {
-        String expectSign = PropertiesUtil.getApplicationProperty("drm.header.signature");
-        String cryptState = isEncrypt ? "암호화":"복호화";
+        String expectSign = PropertiesUtil.getApplicationProperty(SIGN_PROPERTY);
+        String cryptState = isEncrypt ? ENCRYPT.getMessage():DECRYPT.getMessage();
         try (InputStream inputStream = file.getInputStream()) {
             String sign = new String(FileParser.parseSign(inputStream));
             if (expectSign.equals(sign) == isEncrypt) {
