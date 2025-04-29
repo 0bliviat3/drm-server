@@ -23,7 +23,7 @@ public class KeyException extends IllegalStateException implements DRMException 
     }
 
     public KeyException(KeyExceptionMessage message, Throwable cause) {
-        super(message.getMessage());
+        super(message.getMessage(), cause);
         log.error("KeyException: {}, cause: {}", message.getMessage(), cause.getMessage());
     }
 
@@ -34,7 +34,7 @@ public class KeyException extends IllegalStateException implements DRMException 
     }
 
     public KeyException(KeyExceptionMessage message, Throwable cause, Object... formatArgs) {
-        super(String.format(message.getMessage(), formatArgs));
+        super(String.format(message.getMessage(), formatArgs), cause);
         String formatMsg = String.format(message.getMessage(), formatArgs);
         log.error("KeyException: {}, cause: {}", formatMsg, cause.getMessage());
     }

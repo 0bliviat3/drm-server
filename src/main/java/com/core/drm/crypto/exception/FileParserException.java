@@ -21,7 +21,7 @@ public class FileParserException extends IllegalStateException implements DRMExc
     }
 
     public FileParserException(FileParserExceptionMessage message, Throwable cause) {
-        super(message.getMessage());
+        super(message.getMessage(), cause);
         log.error("File parse exception: {}, cause: {}", message.getMessage(), cause.getMessage());
     }
 
@@ -32,7 +32,7 @@ public class FileParserException extends IllegalStateException implements DRMExc
     }
 
     public FileParserException(FileParserExceptionMessage message, Throwable cause, Object... formatArgs) {
-        super(String.format(message.getMessage(), formatArgs));
+        super(String.format(message.getMessage(), formatArgs), cause);
         String formatMsg = String.format(message.getMessage(), formatArgs);
         log.error("File parse exception: {}, cause: {}", formatMsg, cause.getMessage());
     }

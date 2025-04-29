@@ -18,7 +18,7 @@ public class FileException extends IllegalArgumentException implements DRMExcept
     }
 
     public FileException(FileExceptionMessage message, Throwable cause) {
-        super(message.getMessage());
+        super(message.getMessage(), cause);
         log.error("file exception: {}, cause: {}", message.getMessage(), cause.getMessage());
     }
 
@@ -29,7 +29,7 @@ public class FileException extends IllegalArgumentException implements DRMExcept
     }
 
     public FileException(FileExceptionMessage message, Throwable cause, Object... formatArgs) {
-        super(String.format(message.getMessage(), formatArgs));
+        super(String.format(message.getMessage(), formatArgs),cause);
         String formatMsg = String.format(message.getMessage(), formatArgs);
         log.error("file exception: {}, cause: {}", formatMsg, cause.getMessage());
     }

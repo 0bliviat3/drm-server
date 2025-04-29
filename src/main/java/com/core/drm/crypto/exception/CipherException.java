@@ -21,7 +21,7 @@ public class CipherException extends IllegalArgumentException implements DRMExce
     }
 
     public CipherException(CipherExceptionMessage message, Throwable cause) {
-        super(message.getMessage());
+        super(message.getMessage(), cause);
         log.error("cipher exception: {}, cause: {}", message.getMessage(), cause.getMessage());
     }
 
@@ -32,7 +32,7 @@ public class CipherException extends IllegalArgumentException implements DRMExce
     }
 
     public CipherException(CipherExceptionMessage message, Throwable cause, Object... formatArgs) {
-        super(String.format(message.getMessage(), formatArgs));
+        super(String.format(message.getMessage(), formatArgs), cause);
         String formatMsg = String.format(message.getMessage(), formatArgs);
         log.error("cipher exception: {}, cause: {}", formatMsg, cause.getMessage());
     }
