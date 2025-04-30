@@ -78,6 +78,9 @@ public class FileUtil {
         //임시저장 경로 가져오기
         String filePath = Optional.ofNullable(tempPath)
                 .orElse(PropertiesUtil.getApplicationProperty(TEMP_FILE_SRC));
+
+        //TODO: 오늘날짜로된 디렉토리 하나 생성해서 끼워넣기
+
         //임시경로 + 임시파일명으로 저장
         String fullPath = filePath + saveFileName;
 
@@ -98,6 +101,9 @@ public class FileUtil {
         //임시저장 경로 가져오기
         String filePath = Optional.ofNullable(tempPath)
                 .orElse(PropertiesUtil.getApplicationProperty(TEMP_CRYPTO_FILE_SRC));
+
+        //TODO: 오늘날짜로된 디렉토리 하나 생성해서 끼워넣기
+
         String fullPath = filePath + fileName;
         saveTempFile(fullPath, fileData);
         return fullPath;
