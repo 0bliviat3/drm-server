@@ -63,20 +63,129 @@
 
 ### TODO list
 - [ ] 사이퍼 생성
-- [v] 예외처리
-- [v] 상수처리
+- [x] 예외처리
+- [x] 상수처리
 - [ ] 관리자 기능 -> 에러로그 확인, 파일 암복호화 이력 확인, 로그등에 대한 레포트 추출(분석, 데이터), 배치 관리(임시파일 삭제 주기 설정등)
 - [ ] 에러, 이력 데이터 수집
 
-### DB 설계
-파일 암복호화 이력 테이블
-- 암복호화 구분
-- 처리 응답 시간
-- 처리 요청 시간
-- 파일명
-- 확장자
+### DB 설계 (PostgreSQL)
+파일 암복호화 요청 테이블
+- pk
+- 요청 분류 (암호화, 복호화)
 - 요청 IP
-- 처리 결과
+- 파일명
+- 파일 확장자
+- 요청시간
+
+```sql
+create table T_FILE_REQUEST (
+	RequestId SERIAL primary key,
+	RequestType VARCHAR(50) not null,
+	RequestIP VARCHAR(50) not null,
+	OriginFileName VARCHAR(100) not null,
+	FileExtension VARCHAR(50) not null,
+	RequestTime TIMESTAMP not null
+);
+```
+
+파일 임시저장 테이블
+- pk
+- 요청 pk(fk)
+- 임시저장 경로
+- 임시저장 파일명
+- 저장 시간
+
+```sql
+create table T_FILE_TEMP_STORAGE (
+	FileStorageId SERIAL primary key,
+	RequestId VARCHAR(50) not null,
+	FileSavePath VARCHAR(100) not null,
+	TempSaveFileName VARCHAR(100) not null,
+	SaveTime TIMESTAMP not null,
+	constraint FILE_STOR_REQ_ID_FKEY foreign key (RequestId)
+	references T_FILE_REQUEST (RequestId) match simple
+	on update no action on delete no action
+);
+```
+
+암복호화 프로세스 이력 테이블
+- pk
+- 요청 pk(fk)
+- 처리 상태
+- 처리 시간
+
+```sql
+create table T_CRYPTO_HISTORY (
+	CryptoId SERIAL primary key,
+	RequestId VARCHAR(50) not null,
+	ProcessState VARCHAR(50) not null,
+	ProcessTime TIMESTAMP not null,
+	constraint LOG_CRYPTO_REQ_ID_FKEY foreign key (RequestId)
+	references T_FILE_REQUEST (RequestId) match simple
+	on update no action on delete no action
+);
+```
+
+암복호화 결과 테이블
+- pk
+- 요청 pk(fk)
+- 처리 상태
+- 재처리 횟수
+- 처리 시간
+
+```sql
+create table T_CRYPTO_RESULT (
+	CryptoResultId SERIAL primary key,
+	RequestId VARCHAR(50) not null,
+	ProcessResultState VARCHAR(50) not null,
+	RetryCnt INTEGER default 0,
+	ProcessEndTime TIMESTAMP not null,
+	constraint CRYPTO_RESULT_REQ_ID_FKEY foreign key (RequestId)
+	references T_FILE_REQUEST (RequestId) match simple
+	on update no action on delete no action
+);
+```
+
+```mermaid
+erDiagram
+    T_FILE_REQUEST {
+        BIGINT id PK "요청 ID"
+        ENUM request_type "요청 구분"
+        VARCHAR request_ip "요청 IP"
+        VARCHAR original_filename
+        VARCHAR file_extension
+        DATETIME requested_at
+    }
+
+    T_FILE_TEMP_STORAGE {
+        BIGINT id PK
+        BIGINT request_id FK
+        VARCHAR temp_path
+        VARCHAR temp_filename
+        DATETIME stored_at
+    }
+
+    T_CRYPTO_HISTORY {
+        BIGINT id PK
+        BIGINT request_id FK
+        ENUM status "처리 상태"
+        DATETIME processed_at
+    }
+
+    FILE_PROCESS_RESULT {
+        BIGINT id PK
+        BIGINT request_id FK
+        ENUM status "최종 상태"
+        INT retry_count
+        DATETIME processed_at
+    }
+
+FILE_PROCESS_REQUEST ||--o| FILE_TEMP_STORAGE : "1:N"
+FILE_PROCESS_REQUEST ||--o| FILE_PROCESS_HISTORY : "1:N"
+FILE_PROCESS_REQUEST ||--|| FILE_PROCESS_RESULT : "1:1"
+```
+
+
 
 에러 로그 테이블
 - 에러코드
