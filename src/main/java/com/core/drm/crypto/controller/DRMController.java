@@ -30,8 +30,9 @@ public class DRMController {
         InputStream inputStream = drmProcessService.encryptFile(file);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
         String encodeFileName = URLEncoder.encode(file.getOriginalFilename(), StandardCharsets.UTF_8);
+        String downloadFileName = String.format("attachment; filename=\"enc_%s\"", encodeFileName);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"enc_" + encodeFileName + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, downloadFileName)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(inputStreamResource);
     }
@@ -41,8 +42,9 @@ public class DRMController {
         InputStream inputStream = drmProcessService.decryptFile(file);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
         String encodeFileName = URLEncoder.encode(file.getOriginalFilename(), StandardCharsets.UTF_8);
+        String downloadFileName = String.format("attachment; filename=\"dec_%s\"", encodeFileName);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"dec_" + encodeFileName + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, downloadFileName)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(inputStreamResource);
     }
