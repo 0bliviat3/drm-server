@@ -72,8 +72,8 @@ public class DRMProcessServiceImpl implements DRMProcessService {
             throw new CipherException(errMessage, e);
         }
         //처리된 파일 임시파일 도메인으로 래핑
-        TempFile cipherFile2 = new TempFile(savePath);
+        TempFile cipherFile = new TempFile(savePath);
 
-        return fileStorageService.responseFile(cipherFile2, InputStream.class);
+        return fileStorageService.responseFile(cipherFile, InputStream.class);
     }
 }
