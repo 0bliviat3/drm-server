@@ -1,5 +1,6 @@
 package com.core.drm.crypto.exception.handler;
 
+import com.core.drm.crypto.dto.ExceptionResponse;
 import com.core.drm.crypto.dto.FileExceptionResponse;
 import com.core.drm.crypto.service.DRMExceptionService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,16 @@ public class DRMExceptionHandler {
     @Autowired
     public DRMExceptionHandler(DRMExceptionService drmExceptionService) {
         this.drmExceptionService = drmExceptionService;
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ExceptionResponse handleRuntimeException(
+            IllegalStateException ex,
+            HttpServletRequest request) {
+
+        log.error("RuntimeException error handler");
+
+        return drmExceptionService.wrapRuntimeException(ex, request);
     }
 
     @ExceptionHandler(IllegalStateException.class)

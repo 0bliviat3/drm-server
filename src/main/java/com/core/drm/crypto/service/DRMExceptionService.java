@@ -1,6 +1,7 @@
 package com.core.drm.crypto.service;
 
 import com.core.drm.crypto.constant.errormessage.ResponseMessage;
+import com.core.drm.crypto.dto.ExceptionResponse;
 import com.core.drm.crypto.dto.FileExceptionResponse;
 import com.core.drm.crypto.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,13 @@ import static com.core.drm.crypto.constant.errormessage.ResponseMessage.*;
 public class DRMExceptionService {
 
     //TODO: DB 서비스 추가
+
+    public ExceptionResponse wrapRuntimeException(Exception exception, HttpServletRequest request) {
+        String eventTime = String.valueOf(LocalDateTime.now());
+        ResponseMessage responseMessage = checkExceptionType(exception);
+
+        return new ExceptionResponse(eventTime, responseMessage.getCode(), responseMessage.getMessage());
+    }
 
     public FileExceptionResponse wrapException(Exception exception, HttpServletRequest request) {
         String eventTime = String.valueOf(LocalDateTime.now());
