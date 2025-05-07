@@ -14,7 +14,7 @@ import static com.core.drm.crypto.constant.errormessage.PropertyExceptionMessage
 public class PropertiesUtil {
 
     private static final String APP = "application.properties";
-    private static final String DB = "db.properties";
+    private static final String DB = "application-db.properties";
 
     private PropertiesUtil() {
     }
