@@ -5,11 +5,14 @@ import com.core.drm.crypto.exception.FileException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -79,10 +82,8 @@ public class FileUtil {
         String filePath = Optional.ofNullable(tempPath)
                 .orElse(PropertiesUtil.getApplicationProperty(TEMP_FILE_SRC));
 
-        //TODO: 오늘날짜로된 디렉토리 하나 생성해서 끼워넣기
-
         //임시경로 + 임시파일명으로 저장
-        String fullPath = filePath + saveFileName;
+        String fullPath = mkdir(filePath) + saveFileName;
 
         try {
             saveTempFile(fullPath, file.getBytes());
@@ -102,10 +103,20 @@ public class FileUtil {
         String filePath = Optional.ofNullable(tempPath)
                 .orElse(PropertiesUtil.getApplicationProperty(TEMP_CRYPTO_FILE_SRC));
 
-        //TODO: 오늘날짜로된 디렉토리 하나 생성해서 끼워넣기
-
-        String fullPath = filePath + fileName;
+        String fullPath = mkdir(filePath) + fileName;
         saveTempFile(fullPath, fileData);
         return fullPath;
+    }
+
+    private static String mkdir(String path) {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String dirName = LocalDateTime.now().format(dateFormat);
+        String returnPath = path + File.separator + dirName;
+        File file = new File(returnPath);
+
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        return returnPath + File.separator;
     }
 }
