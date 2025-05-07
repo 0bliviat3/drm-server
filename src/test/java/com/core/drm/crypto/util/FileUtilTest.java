@@ -2,6 +2,10 @@ package com.core.drm.crypto.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class FileUtilTest {
 
     @Test
@@ -17,6 +21,20 @@ public class FileUtilTest {
         int splitPoint = fileName.lastIndexOf('.') + 1;
         String extension = fileName.substring(splitPoint);
         System.out.println(extension);
+    }
+
+    @Test
+    void 디렉토리_확인() {
+        String path = PropertiesUtil.getApplicationProperty("temp.file.save.path");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        String date = LocalDateTime.now().format(dateFormat);
+
+        File file = new File(path + File.separator + date);
+
+        if (!file.exists()) {
+            file.mkdir();
+        }
     }
 
 }
