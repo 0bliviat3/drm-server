@@ -16,6 +16,7 @@ import java.util.UUID;
 public class FileTempStorage {
 
     @Id
+    @GeneratedValue
     @Column(name = "file_storage_id")
     private UUID fileStorageId;
 

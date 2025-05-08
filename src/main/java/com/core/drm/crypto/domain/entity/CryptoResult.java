@@ -17,6 +17,7 @@ import java.util.UUID;
 public class CryptoResult {
 
     @Id
+    @GeneratedValue
     @Column(name = "crypto_result_id")
     private UUID cryptoResultId;
 

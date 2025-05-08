@@ -18,6 +18,7 @@ import java.util.UUID;
 public class CryptoHistory {
 
     @Id
+    @GeneratedValue
     @Column(name = "crypto_id")
     private UUID cryptoId;
 

@@ -17,6 +17,7 @@ import java.util.UUID;
 public class FileRequest {
 
     @Id
+    @GeneratedValue
     @Column(name = "request_id")
     private UUID requestId;
 
