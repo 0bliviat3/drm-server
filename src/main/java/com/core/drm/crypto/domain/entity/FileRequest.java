@@ -13,6 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FileRequest {
 
     @Id
@@ -32,7 +33,7 @@ public class FileRequest {
     @Column(nullable = false, name = "file_extension")
     private String fileExtension;
 
-    @Column(nullable = false, name = "request_time")
+    @Column(name = "request_time")
     private LocalDateTime requestTime;
 
 }

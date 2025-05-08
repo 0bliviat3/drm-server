@@ -2,10 +2,7 @@ package com.core.drm.crypto.domain.entity;
 
 import com.core.drm.crypto.constant.ProcessState;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +14,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CryptoHistory {
 
     @Id
@@ -31,6 +29,6 @@ public class CryptoHistory {
     @Column(name = "process_state", nullable = false)
     private ProcessState processState;
 
-    @Column(nullable = false, name = "process_time")
+    @Column(name = "process_time")
     private LocalDateTime processTime;
 }

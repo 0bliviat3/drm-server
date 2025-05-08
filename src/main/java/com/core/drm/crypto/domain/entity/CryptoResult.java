@@ -2,10 +2,7 @@ package com.core.drm.crypto.domain.entity;
 
 import com.core.drm.crypto.constant.ProcessState;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,6 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CryptoResult {
 
     @Id
@@ -33,6 +31,6 @@ public class CryptoResult {
     @Column(nullable = false, name = "retry_count")
     private Integer retryCount;
 
-    @Column(nullable = false, name = "process_end_time")
+    @Column(name = "process_end_time")
     private LocalDateTime processEndTime;
 }

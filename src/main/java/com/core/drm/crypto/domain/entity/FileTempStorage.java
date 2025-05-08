@@ -1,10 +1,7 @@
 package com.core.drm.crypto.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,6 +12,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FileTempStorage {
 
     @Id
@@ -31,7 +29,7 @@ public class FileTempStorage {
     @Column(name = "temp_save_file_name", nullable = false)
     private String tempSaveFileName;
 
-    @Column(name = "save_time", nullable = false)
+    @Column(name = "save_time")
     private LocalDateTime saveTime;
 
 }
