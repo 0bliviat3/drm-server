@@ -12,9 +12,7 @@ public enum CipherExceptionMessage {
     FAIL_ENCRYPT_KEY("[ERROR] 대칭키 비대칭 암호화 실패"),
     FAIL_DECRYPT_KEY("[ERROR] 대칭키 비대칭 복호화 실패"),
     IMPOSSIBLE_TRY("[ERROR] 처리불가능한 요청: %s 문서에 %s 시도"),
-    INVALID_SIGN("[ERROR] 시그니처 검증 에러"),
-    ENCRYPT("암호화"),
-    DECRYPT("복호화")
+    INVALID_SIGN("[ERROR] 시그니처 검증 에러")
     ;
 
     private final String message;
