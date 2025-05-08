@@ -8,6 +8,7 @@ import com.core.drm.crypto.service.DRMProcessService;
 import com.core.drm.crypto.service.FileStorageService;
 import com.core.drm.crypto.util.FileUtil;
 import com.core.drm.crypto.util.SignValidator;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bouncycastle.crypto.BlockCipher;
@@ -36,12 +37,12 @@ public class DRMProcessServiceImpl implements DRMProcessService {
 
 
     @Override
-    public InputStream encryptFile(MultipartFile file) {
+    public InputStream encryptFile(MultipartFile file, HttpServletRequest request) {
         return cryptProcess(file, true, FAIL_ENCRYPT, drmCipherService::encryptFile);
     }
 
     @Override
-    public InputStream decryptFile(MultipartFile file) {
+    public InputStream decryptFile(MultipartFile file, HttpServletRequest request) {
         return cryptProcess(file, false, FAIL_DECRYPT, drmCipherService::decryptFile);
     }
 

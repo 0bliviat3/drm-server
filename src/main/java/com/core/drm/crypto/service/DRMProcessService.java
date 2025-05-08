@@ -1,5 +1,6 @@
 package com.core.drm.crypto.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,12 +18,12 @@ public interface DRMProcessService {
     /*
     암호화
      */
-    public InputStream encryptFile(MultipartFile file);
+    public InputStream encryptFile(MultipartFile file, HttpServletRequest request);
 
 
     /*
     복호화
      */
-    public InputStream decryptFile(MultipartFile file);
+    public InputStream decryptFile(MultipartFile file, HttpServletRequest request);
 
 }

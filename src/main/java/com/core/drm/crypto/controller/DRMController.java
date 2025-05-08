@@ -1,6 +1,7 @@
 package com.core.drm.crypto.controller;
 
 import com.core.drm.crypto.service.DRMProcessService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -26,8 +27,10 @@ public class DRMController {
     }
 
     @PostMapping(value = "/enc/file")
-    public ResponseEntity<InputStreamResource> encryptFile(@RequestParam("sourceFile") MultipartFile file) {
-        InputStream inputStream = drmProcessService.encryptFile(file);
+    public ResponseEntity<InputStreamResource> encryptFile(
+            @RequestParam("sourceFile") MultipartFile file,
+            HttpServletRequest request) {
+        InputStream inputStream = drmProcessService.encryptFile(file, request);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
         String encodeFileName = URLEncoder.encode(file.getOriginalFilename(), StandardCharsets.UTF_8);
         String downloadFileName = String.format("attachment; filename=\"enc_%s\"", encodeFileName);
@@ -38,8 +41,10 @@ public class DRMController {
     }
 
     @PostMapping(value = "/dec/file")
-    public ResponseEntity<InputStreamResource> decryptFile(@RequestParam("sourceFile") MultipartFile file) {
-        InputStream inputStream = drmProcessService.decryptFile(file);
+    public ResponseEntity<InputStreamResource> decryptFile(
+            @RequestParam("sourceFile") MultipartFile file,
+            HttpServletRequest request) {
+        InputStream inputStream = drmProcessService.decryptFile(file, request);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
         String encodeFileName = URLEncoder.encode(file.getOriginalFilename(), StandardCharsets.UTF_8);
         String downloadFileName = String.format("attachment; filename=\"dec_%s\"", encodeFileName);
