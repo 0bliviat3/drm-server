@@ -7,6 +7,7 @@ import com.core.drm.crypto.util.FileUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 import static com.core.drm.crypto.constant.errormessage.EntityExceptionMessage.NOT_FOUND_ID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileRequestService {
