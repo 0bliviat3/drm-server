@@ -1,14 +1,17 @@
 package com.core.drm.crypto.service.impl;
 
+import com.core.drm.crypto.constant.CipherType;
 import com.core.drm.crypto.constant.errormessage.CipherExceptionMessage;
 import com.core.drm.crypto.domain.TempFile;
 import com.core.drm.crypto.exception.CipherException;
 import com.core.drm.crypto.service.DRMCipherService;
 import com.core.drm.crypto.service.DRMProcessService;
+import com.core.drm.crypto.service.FileRequestService;
 import com.core.drm.crypto.service.FileStorageService;
 import com.core.drm.crypto.util.FileUtil;
 import com.core.drm.crypto.util.SignValidator;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bouncycastle.crypto.BlockCipher;
@@ -19,30 +22,30 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
+import static com.core.drm.crypto.constant.CipherType.DECRYPT;
+import static com.core.drm.crypto.constant.CipherType.ENCRYPT;
 import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.FAIL_DECRYPT;
 import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.FAIL_ENCRYPT;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DRMProcessServiceImpl implements DRMProcessService {
 
     private final DRMCipherService drmCipherService;
     private final FileStorageService fileStorageService;
-
-    @Autowired
-    public DRMProcessServiceImpl(final DRMCipherService drmCipherService, final FileStorageService fileStorageService) {
-        this.drmCipherService = drmCipherService;
-        this.fileStorageService = fileStorageService;
-    }
+    private final FileRequestService requestService;
 
 
     @Override
     public InputStream encryptFile(MultipartFile file, HttpServletRequest request) {
+        requestService.saveFileRequest(file, request, ENCRYPT);
         return cryptProcess(file, true, FAIL_ENCRYPT, drmCipherService::encryptFile);
     }
 
     @Override
     public InputStream decryptFile(MultipartFile file, HttpServletRequest request) {
+        requestService.saveFileRequest(file, request, DECRYPT);
         return cryptProcess(file, false, FAIL_DECRYPT, drmCipherService::decryptFile);
     }
 
