@@ -6,6 +6,8 @@ import com.core.drm.crypto.exception.CipherException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static com.core.drm.crypto.constant.CipherType.DECRYPT;
+import static com.core.drm.crypto.constant.CipherType.ENCRYPT;
 import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.*;
 
 public class SignValidator {
@@ -17,7 +19,7 @@ public class SignValidator {
 
     public static void validateSign(TempFile file, boolean isEncrypt) {
         String expectSign = PropertiesUtil.getApplicationProperty(SIGN_PROPERTY);
-        String cryptState = isEncrypt ? ENCRYPT.getMessage():DECRYPT.getMessage();
+        String cryptState = isEncrypt ? ENCRYPT.getDescription():DECRYPT.getDescription();
         try (InputStream inputStream = file.getInputStream()) {
             String sign = new String(FileParser.parseSign(inputStream));
             if (expectSign.equals(sign) == isEncrypt) {
