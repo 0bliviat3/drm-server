@@ -1,5 +1,5 @@
 package com.core.drm.crypto.constant;
 
 public enum ProcessState {
-    SUCCESS, FAIL, PENDING;
+    SUCCESS, FAIL, IN_PROCESS;
 }
