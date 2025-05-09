@@ -3,6 +3,7 @@ package com.core.drm.crypto.domain.entity;
 import com.core.drm.crypto.constant.CipherType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class FileRequest {
     private UUID requestId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "request_type")
+    @Column(nullable = false, name = "request_type")
     private CipherType requestType;
 
     @Column(nullable = false, name = "request_ip")
@@ -36,5 +37,12 @@ public class FileRequest {
 
     @Column(name = "request_time")
     private LocalDateTime requestTime;
+
+    @Transient
+    private MultipartFile file;
+
+    public boolean isEncrypt() {
+        return this.requestType == CipherType.ENCRYPT;
+    }
 
 }
