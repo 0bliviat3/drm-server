@@ -23,9 +23,10 @@ public class FileRequestService {
 
     private final FileRequestRepository fileRequestRepository;
 
-    public void saveFileRequest(MultipartFile file, HttpServletRequest request, CipherType cipherType) {
+    public FileRequest saveFileRequest(MultipartFile file, HttpServletRequest request, CipherType cipherType) {
         String fileExtension = FileUtil.getFileExtension(file.getOriginalFilename());
         FileRequest fileRequest = FileRequest.builder()
+                .file(file)
                 .fileName(file.getOriginalFilename())
                 .fileExtension(fileExtension)
                 .requestIP(request.getRemoteAddr())
@@ -33,7 +34,7 @@ public class FileRequestService {
                 .requestTime(LocalDateTime.now())
                 .build();
 
-        fileRequestRepository.save(fileRequest);
+        return fileRequestRepository.save(fileRequest);
     }
 
     public FileRequest findById(UUID requestId) {
@@ -41,7 +42,5 @@ public class FileRequestService {
         return fileRequestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException(errMessage));
     }
-
-
 
 }
