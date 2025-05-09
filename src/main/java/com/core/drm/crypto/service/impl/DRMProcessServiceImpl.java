@@ -55,7 +55,7 @@ public class DRMProcessServiceImpl implements DRMProcessService {
         return FAIL_DECRYPT;
     }
 
-    private InputStream cryptProcess(
+    public InputStream cryptProcess(
             FileRequest fileRequest,
             TriConsumer<InputStream, OutputStream, BlockCipher> triConsumer) {
         boolean isEncrypt = fileRequest.isEncrypt();
@@ -77,13 +77,12 @@ public class DRMProcessServiceImpl implements DRMProcessService {
             byte[] outputByte = outputStream.toByteArray();
             //처리된 파일 임시저장
             savePath = FileUtil.saveTempFile(outputByte, file.getOriginalFilename(), null);
-            tempFile = new TempFile(savePath);
-            fileTempStorageService.saveFileTempStorage(fileRequest, tempFile);
         } catch (IOException e) {
             throw new CipherException(getErrorMsg(isEncrypt), e);
         }
         //처리된 파일 임시파일 도메인으로 래핑
         TempFile cipherFile = new TempFile(savePath);
+        fileTempStorageService.saveFileTempStorage(fileRequest, cipherFile);
 
         return fileStorageService.responseFile(cipherFile, InputStream.class);
     }
