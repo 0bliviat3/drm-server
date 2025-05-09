@@ -90,4 +90,12 @@ public class TempFile {
      */
     public void delete() {
     }
+
+    public String getName() {
+        return file.getName();
+    }
+
+    public String getPath() {
+        return file.getPath();
+    }
 }
