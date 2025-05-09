@@ -3,11 +3,9 @@ package com.core.drm.crypto.service.impl;
 import com.core.drm.crypto.constant.CipherType;
 import com.core.drm.crypto.constant.errormessage.CipherExceptionMessage;
 import com.core.drm.crypto.domain.TempFile;
+import com.core.drm.crypto.domain.entity.FileRequest;
 import com.core.drm.crypto.exception.CipherException;
-import com.core.drm.crypto.service.DRMCipherService;
-import com.core.drm.crypto.service.DRMProcessService;
-import com.core.drm.crypto.service.FileRequestService;
-import com.core.drm.crypto.service.FileStorageService;
+import com.core.drm.crypto.service.*;
 import com.core.drm.crypto.util.FileUtil;
 import com.core.drm.crypto.util.SignValidator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,30 +33,38 @@ public class DRMProcessServiceImpl implements DRMProcessService {
     private final DRMCipherService drmCipherService;
     private final FileStorageService fileStorageService;
     private final FileRequestService requestService;
+    private final FileTempStorageService fileTempStorageService;
 
 
     @Override
     public InputStream encryptFile(MultipartFile file, HttpServletRequest request) {
-        requestService.saveFileRequest(file, request, ENCRYPT);
-        return cryptProcess(file, true, FAIL_ENCRYPT, drmCipherService::encryptFile);
+        FileRequest fileRequest = requestService.saveFileRequest(file, request, ENCRYPT);
+        return cryptProcess(fileRequest, drmCipherService::encryptFile);
     }
 
     @Override
     public InputStream decryptFile(MultipartFile file, HttpServletRequest request) {
-        requestService.saveFileRequest(file, request, DECRYPT);
-        return cryptProcess(file, false, FAIL_DECRYPT, drmCipherService::decryptFile);
+        FileRequest fileRequest = requestService.saveFileRequest(file, request, DECRYPT);
+        return cryptProcess(fileRequest, drmCipherService::decryptFile);
+    }
+
+    private CipherExceptionMessage getErrorMsg(boolean encryptFlag) {
+        if (encryptFlag) {
+            return FAIL_ENCRYPT;
+        }
+        return FAIL_DECRYPT;
     }
 
     private InputStream cryptProcess(
-            MultipartFile file,
-            boolean isEncrypt,
-            CipherExceptionMessage errMessage,
+            FileRequest fileRequest,
             TriConsumer<InputStream, OutputStream, BlockCipher> triConsumer) {
+        boolean isEncrypt = fileRequest.isEncrypt();
+        MultipartFile file = fileRequest.getFile();
         //파일 임시저장
         String savePath = FileUtil.saveTempFile(file, null);
-        //TODO: DB에도 경로, 원본이름 저장
         //임시저장파일 도메인 생성
         TempFile tempFile = new TempFile(savePath);
+        fileTempStorageService.saveFileTempStorage(fileRequest, tempFile);
         //임시파일 암복호화 정합성 검사
         SignValidator.validateSign(tempFile, isEncrypt);
         //결과 출력 스트림 생성
@@ -71,9 +77,10 @@ public class DRMProcessServiceImpl implements DRMProcessService {
             byte[] outputByte = outputStream.toByteArray();
             //처리된 파일 임시저장
             savePath = FileUtil.saveTempFile(outputByte, file.getOriginalFilename(), null);
-            //TODO: DB에도 경로 저장
+            tempFile = new TempFile(savePath);
+            fileTempStorageService.saveFileTempStorage(fileRequest, tempFile);
         } catch (IOException e) {
-            throw new CipherException(errMessage, e);
+            throw new CipherException(getErrorMsg(isEncrypt), e);
         }
         //처리된 파일 임시파일 도메인으로 래핑
         TempFile cipherFile = new TempFile(savePath);
