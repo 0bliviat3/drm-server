@@ -27,6 +27,4 @@ public class FileTempStorageService {
 
         return fileTempStorageRepository.save(fileTempStorage);
     }
-
-
 }
