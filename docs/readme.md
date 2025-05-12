@@ -62,9 +62,11 @@
 - DRM API 컨트롤러
 
 ### TODO list
-- [ ] 사이퍼 생성
+- [ ] 암호화 알고리즘 전략패턴 적용 -> IV, Key size도 동시에 반영되어야 함(FileParser, DRMCipherService)
 - [x] 예외처리
 - [x] 상수처리
+- [ ] ThreadLocalUtil 구현
+- [ ] Interceptor 구현
 - [ ] 관리자 기능 -> 에러로그 확인, 파일 암복호화 이력 확인, 로그등에 대한 레포트 추출(분석, 데이터), 배치 관리(임시파일 삭제 주기 설정등)
 - [ ] 에러, 이력 데이터 수집
 
@@ -80,11 +82,15 @@
 - 단일책임 원칙을 따라 서비스와 레포지토리 1:1 매칭을 원칙으로 구현
 
 ### 파일요청 흐름관리
-요청흐름 이력(진행, 성공, 실패)에 대해 AOP를 사용한 DB저장 검토
+최초 요청시 threadLocal에 저장하기: ThreadLocalUtil 구현 필요함
+요청흐름 이력(진행, 성공, 실패)에 대해 AOP를 사용한 DB저장 검토 (ThreadLocal 활용으로 변경)
 
 진행단계: DRMProcessServiceImpl.cryptProcess 메서드 호출시점
 실패단계: 에러발생시점(exceptionHandler에서 확인될 경우)
 성공단계: 응답을 보낸 시점
+
+실패단계 또는 결과테이블 저장시 ThreadLocal을 통해서 요청데이터 가져오기(key값)
+postHandler에서 remove처리
 
 ### DB 설계 (PostgreSQL)
 파일 암복호화 요청 테이블
