@@ -1,6 +1,5 @@
 package com.core.drm.crypto.service.impl;
 
-import com.core.drm.crypto.constant.ProcessState;
 import com.core.drm.crypto.constant.errormessage.CipherExceptionMessage;
 import com.core.drm.crypto.domain.TempFile;
 import com.core.drm.crypto.domain.entity.FileRequest;
@@ -8,6 +7,7 @@ import com.core.drm.crypto.exception.CipherException;
 import com.core.drm.crypto.service.*;
 import com.core.drm.crypto.util.FileUtil;
 import com.core.drm.crypto.util.SignValidator;
+import com.core.drm.crypto.util.ThreadLocalMapUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,14 +15,15 @@ import org.apache.logging.log4j.util.TriConsumer;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.engines.AESLightEngine;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.*;
 import java.io.*;
 
 import static com.core.drm.crypto.constant.CipherType.DECRYPT;
 import static com.core.drm.crypto.constant.CipherType.ENCRYPT;
 import static com.core.drm.crypto.constant.ProcessState.*;
+import static com.core.drm.crypto.constant.ThreadKey.FILE_REQUEST;
 import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.FAIL_DECRYPT;
 import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.FAIL_ENCRYPT;
 
@@ -58,6 +59,8 @@ public class DRMProcessServiceImpl implements DRMProcessService {
     }
 
     private TempFile prepareTempFile(FileRequest fileRequest) {
+        //요청 id 저장
+        ThreadLocalMapUtil.put(FILE_REQUEST, fileRequest);
         MultipartFile file = fileRequest.getFile();
         //파일 임시저장
         String savePath = FileUtil.saveTempFile(file, null);
@@ -84,9 +87,7 @@ public class DRMProcessServiceImpl implements DRMProcessService {
             TempFile cryptTempFile = new TempFile(savePath);
             fileTempStorageService.saveFileTempStorage(fileRequest, cryptTempFile);
             return cryptTempFile;
-        } catch (IOException e) {
-            //프로세스 [실패]저장
-            cryptoHistoryService.saveCryptoHistory(fileRequest, FAIL);
+        } catch (Exception e) {
             throw new CipherException(getErrorMsg(fileRequest.isEncrypt()), e);
         }
     }
