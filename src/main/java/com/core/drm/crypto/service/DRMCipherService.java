@@ -33,7 +33,7 @@ public class DRMCipherService {
     }
 
     private byte[] generateIV() {
-        byte[] iv = new byte[12]; //TODO: 96-bit -> AES-GCM
+        byte[] iv = new byte[IV.getLength()]; //96-bit -> AES-GCM
         SecureRandom random = new SecureRandom();
         random.nextBytes(iv);
 
@@ -49,7 +49,7 @@ public class DRMCipherService {
     }
 
     public void encryptFile(InputStream inputStream, OutputStream outputStream, BlockCipher cipher) {
-        SecretKey key = keyStorage.generateKey(cipher, 128); //TODO: AES-128사용
+        SecretKey key = keyStorage.generateKey(cipher, 128); //AES-128사용
         byte[] iv = generateIV();
 
         CipherFileHeader header = FileParser.generateHeader(null, asymmetricCipher.cryptKey(key), iv);
