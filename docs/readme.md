@@ -65,8 +65,8 @@
 - [ ] 암호화 알고리즘 전략패턴 적용 -> IV, Key size도 동시에 반영되어야 함(FileParser, DRMCipherService)
 - [x] 예외처리
 - [x] 상수처리
-- [ ] ThreadLocalUtil 구현
-- [ ] Interceptor 구현
+- [x] ThreadLocalUtil 구현
+- [ ] Interceptor 구현 -> posthandler: 요청결과 저장
 - [ ] 관리자 기능 -> 에러로그 확인, 파일 암복호화 이력 확인, 로그등에 대한 레포트 추출(분석, 데이터), 배치 관리(임시파일 삭제 주기 설정등)
 - [ ] 에러, 이력 데이터 수집
 
