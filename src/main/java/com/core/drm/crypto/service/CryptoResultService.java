@@ -1,5 +1,6 @@
 package com.core.drm.crypto.service;
 
+import com.core.drm.crypto.constant.FileState;
 import com.core.drm.crypto.constant.ProcessState;
 import com.core.drm.crypto.domain.entity.CryptoHistory;
 import com.core.drm.crypto.domain.entity.CryptoResult;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
+import static com.core.drm.crypto.constant.FileState.EXIST;
 
 @Slf4j
 @Service
@@ -24,6 +27,7 @@ public class CryptoResultService {
                 .processEndTime(LocalDateTime.now())
                 .retryCount(0)
                 .processState(processState)
+                .fileState(EXIST)
                 .build();
 
         return cryptoResultRepository.save(cryptoResult);
@@ -35,6 +39,7 @@ public class CryptoResultService {
                 .processEndTime(cryptoHistory.getProcessTime())
                 .retryCount(0)
                 .processState(cryptoHistory.getProcessState())
+                .fileState(EXIST)
                 .build();
 
         cryptoResultRepository.save(cryptoResult);
