@@ -1,8 +1,7 @@
 package com.core.drm.crypto.service;
 
-import com.core.drm.crypto.constant.ProcessState;
-import com.core.drm.crypto.constant.ThreadKey;
 import com.core.drm.crypto.constant.errormessage.ResponseMessage;
+import com.core.drm.crypto.domain.entity.CryptoHistory;
 import com.core.drm.crypto.domain.entity.FileRequest;
 import com.core.drm.crypto.dto.ExceptionResponse;
 import com.core.drm.crypto.dto.FileExceptionResponse;
@@ -28,9 +27,12 @@ public class DRMExceptionService {
 
     //TODO: 에러 저장 서비스 추가
     private final CryptoHistoryService cryptoHistoryService;
+    private final CryptoResultService cryptoResultService;
 
     public void saveFail() {
-        cryptoHistoryService.saveCryptoHistory((FileRequest) ThreadLocalMapUtil.get(FILE_REQUEST), FAIL);
+        CryptoHistory cryptoHistory =
+                cryptoHistoryService.saveCryptoHistory((FileRequest) ThreadLocalMapUtil.get(FILE_REQUEST), FAIL);
+        cryptoResultService.saveCryptoResult(cryptoHistory);
         ThreadLocalMapUtil.clear();
     }
 
