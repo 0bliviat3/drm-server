@@ -1,5 +1,6 @@
 package com.core.drm.crypto.domain.entity;
 
+import com.core.drm.crypto.constant.FileState;
 import com.core.drm.crypto.constant.ProcessState;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,4 +35,8 @@ public class CryptoResult {
 
     @Column(name = "process_end_time")
     private LocalDateTime processEndTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "file_state", nullable = false)
+    private FileState fileState;
 }
