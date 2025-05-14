@@ -109,13 +109,13 @@ postHandler에서 remove처리
 - 서버 실행시 bean 등록된 job들, trigger와 함께 스케줄러 등록
 
 <<구현 순서>>
-- jobDefinition: entity 구현
-- entity repository 구현
-- entity service 구현
-- 배치 실행기 구현 (job 구현체)
-- 스케줄러 등록부 구현
-- 배치 컨트롤러 구현
-- 테스트용 배치 빈 구현: 파일 삭제 배치
+- [x] jobDefinition: entity 구현
+- [x] entity repository 구현
+- [x] entity service 구현
+- [x] 배치 실행기 구현 (quartz.job 구현체)
+- [ ] 스케줄러 등록부 구현
+- [ ] 배치 컨트롤러 구현
+- [ ] 테스트용 배치 빈 구현: 파일 삭제 배치
 
 ### DB 설계 (PostgreSQL)
 파일 암복호화 요청 테이블
