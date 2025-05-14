@@ -9,8 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.FAIL_CONVERT_STREAM;
-import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.NOT_EXISTS;
+import static com.core.drm.crypto.constant.errormessage.FileExceptionMessage.*;
 
 
 /*
@@ -86,9 +85,11 @@ public class TempFile {
 
     /*
     임시저장 파일 삭제처리
-    TODO: 구현, 배치로 일괄 처리할 예정
      */
     public void delete() {
+        if (!this.file.delete()) {
+            throw new FileException(FAIL_DELETE_FILE);
+        }
     }
 
     public String getName() {
