@@ -1,6 +1,5 @@
 package com.core.drm.crypto.service;
 
-import com.core.drm.crypto.constant.FileState;
 import com.core.drm.crypto.constant.ProcessState;
 import com.core.drm.crypto.domain.entity.CryptoHistory;
 import com.core.drm.crypto.domain.entity.CryptoResult;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.core.drm.crypto.constant.FileState.EXIST;
 
@@ -43,6 +43,15 @@ public class CryptoResultService {
                 .build();
 
         cryptoResultRepository.save(cryptoResult);
+    }
+
+    public void updateFileStateToRemoved(List<String> requestIds) {
+        try {
+            cryptoResultRepository.bulkUpdateStateToRemoved(requestIds);
+        } catch (Exception e) {
+            //TODO: 예외처리 필요
+        }
+
     }
 
 }
