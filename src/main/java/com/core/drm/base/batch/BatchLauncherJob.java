@@ -1,7 +1,7 @@
-package com.core.base.batch;
+package com.core.drm.base.batch;
 
-import com.core.base.batch.domain.JobDefinition;
-import com.core.base.batch.service.JobDefinitionService;
+import com.core.drm.base.batch.domain.JobDefinition;
+import com.core.drm.base.batch.service.JobDefinitionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;

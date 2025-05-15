@@ -1,6 +1,6 @@
-package com.core.base.batch.domain;
+package com.core.drm.base.batch.domain;
 
-import com.core.base.MapToJsonConverter;
+import com.core.drm.base.MapToJsonConverter;
 import jakarta.persistence.*;
 import lombok.*;
 

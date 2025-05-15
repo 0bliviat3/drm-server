@@ -1,6 +1,6 @@
-package com.core.base.batch.repository;
+package com.core.drm.base.batch.repository;
 
-import com.core.base.batch.domain.JobDefinition;
+import com.core.drm.base.batch.domain.JobDefinition;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

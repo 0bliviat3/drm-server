@@ -1,7 +1,7 @@
-package com.core.base.batch.service;
+package com.core.drm.base.batch.service;
 
-import com.core.base.batch.domain.JobDefinition;
-import com.core.base.batch.repository.JobDefinitionRepository;
+import com.core.drm.base.batch.domain.JobDefinition;
+import com.core.drm.base.batch.repository.JobDefinitionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -18,7 +19,8 @@ public class JobDefinitionService {
     private final JobDefinitionRepository jobDefinitionRepository;
 
     public JobDefinition saveJobDefinition(JobDefinition jobDefinition) {
-        jobDefinition.setCreatedDate(LocalDateTime.now());
+        LocalDateTime date = Optional.ofNullable(jobDefinition.getCreatedDate()).orElse(LocalDateTime.now());
+        jobDefinition.setCreatedDate(date);
         return jobDefinitionRepository.save(jobDefinition);
     }
 

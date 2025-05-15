@@ -1,4 +1,4 @@
-package com.core.base;
+package com.core.drm.base;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

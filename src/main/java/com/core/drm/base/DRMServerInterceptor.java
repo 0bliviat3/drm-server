@@ -1,4 +1,4 @@
-package com.core.base;
+package com.core.drm.base;
 
 import com.core.drm.crypto.service.ResponseProcessService;
 import jakarta.servlet.http.HttpServletRequest;
