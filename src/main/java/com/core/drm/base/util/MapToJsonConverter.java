@@ -1,4 +1,4 @@
-package com.core.drm.base;
+package com.core.drm.base.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -23,7 +23,7 @@ public class MapToJsonConverter implements AttributeConverter<Map<String, String
     @Override
     public Map<String, String> convertToEntityAttribute(String s) {
         try {
-            return new ObjectMapper().readValue(s, new TypeReference<Map<String, String>>() {});
+            return new ObjectMapper().readValue(s, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
             //TODO: 예외 처리
             throw new RuntimeException(e);
