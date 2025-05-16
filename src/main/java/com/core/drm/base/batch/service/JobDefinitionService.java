@@ -1,11 +1,13 @@
 package com.core.drm.base.batch.service;
 
 import com.core.drm.base.batch.domain.JobDefinition;
+import com.core.drm.base.batch.dto.JobDefinitionDTO;
 import com.core.drm.base.batch.repository.JobDefinitionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +34,15 @@ public class JobDefinitionService {
     public List<JobDefinition> findAllEnableJobs() {
         //TODO: 상수처리
         return jobDefinitionRepository.findByState("enable");
+    }
+
+    @Transactional
+    public void updateJobDefinition(JobDefinitionDTO jobDefinitionDTO) {
+        JobDefinition jobDefinition = findByJobBeanName(jobDefinitionDTO.jobBeanName());
+        jobDefinition.setJobParams(jobDefinitionDTO.jobParams());
+        jobDefinition.setDataCode(jobDefinitionDTO.dataCode());
+        jobDefinition.setModifiedDate(LocalDateTime.now());
+        jobDefinition.setCronExpression(jobDefinitionDTO.cronExpression());
     }
 
 }
