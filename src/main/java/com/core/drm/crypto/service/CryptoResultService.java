@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.core.drm.crypto.constant.FileState.EXIST;
 
@@ -45,7 +46,7 @@ public class CryptoResultService {
         cryptoResultRepository.save(cryptoResult);
     }
 
-    public void updateFileStateToRemoved(List<String> requestIds) {
+    public void updateFileStateToRemoved(List<UUID> requestIds) {
         try {
             cryptoResultRepository.bulkUpdateStateToRemoved(requestIds);
         } catch (Exception e) {
