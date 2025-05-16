@@ -1,8 +1,10 @@
 package com.core.drm.base.batch.domain;
 
-import com.core.drm.base.MapToJsonConverter;
+import com.core.drm.base.batch.dto.JobDefinitionDTO;
+import com.core.drm.base.util.MapToJsonConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -36,9 +38,6 @@ public class JobDefinition {
     @Column(name = "cron_expression", nullable = false)
     private String cronExpression;
 
-    @Column(name = "user_expression", nullable = false)
-    private String userExpression;
-
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
@@ -48,4 +47,13 @@ public class JobDefinition {
     @Column(name = "job_params", columnDefinition = "jsonb")
     @Convert(converter = MapToJsonConverter.class)
     private Map<String, String> jobParams;
+
+    @Column(name = "data_code")
+    @ColumnDefault("I")
+    private String dataCode;
+
+    @Transient
+    public JobDefinitionDTO toDTO() {
+        return new JobDefinitionDTO(jobBeanName, state, cronExpression, dataCode, jobParams);
+    }
 }
