@@ -7,15 +7,20 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BatchSchedulerService {
 
+    private final JobRegistry jobRegistry;
     private final Scheduler scheduler;
     private final JobDefinitionService jobDefinitionService;
 
@@ -39,13 +44,12 @@ public class BatchSchedulerService {
     }
 
     public void registrySchedule(JobDefinitionDTO jobDTO) throws SchedulerException {
-        if (isExistJob(jobDTO)) {
-            //TODO: 예외 던지기 (이미 존재하는 job)
+        if (!isExistJob(jobDTO)) {
+            jobDefinitionService.saveJobDefinition(jobDTO.toEntity());
+            JobDetail jobDetail = makeJobDetail(jobDTO);
+            Trigger trigger = makeTrigger(jobDetail, jobDTO);
+            scheduler.scheduleJob(jobDetail, trigger);
         }
-        jobDefinitionService.saveJobDefinition(jobDTO.toEntity());
-        JobDetail jobDetail = makeJobDetail(jobDTO);
-        Trigger trigger = makeTrigger(jobDetail, jobDTO);
-        scheduler.scheduleJob(jobDetail, trigger);
     }
 
     public void deleteSchedule(JobDefinitionDTO jobDTO) throws SchedulerException {
@@ -74,5 +78,39 @@ public class BatchSchedulerService {
                 .withIdentity("trigger-" + jobDefinitionDTO.jobBeanName())
                 .withSchedule(CronScheduleBuilder.cronSchedule(jobDefinitionDTO.cronExpression()))
                 .build();
+    }
+
+    /*
+    DB에 bean이 존재할 경우 init하지 않음
+    존재하지 않을 경우 최초 bean 삽입
+     */
+    public void initJob() {
+        List<JobDefinitionDTO> jobDefinitionDTOS = getUnRegisteredJobList();
+        if (jobDefinitionDTOS.isEmpty()) {
+            return;
+        }
+        jobDefinitionDTOS
+                .forEach(jobDTO -> jobDefinitionService.saveJobDefinition(jobDTO.toEntity()));
+    }
+
+    private List<JobDefinitionDTO> getUnRegisteredJobList() {
+        //TODO: 상수처리 필요
+        Set<String> jobDefinitions = jobDefinitionService.findAllEnableJobs()
+                .stream()
+                .map(JobDefinition::getJobBeanName)
+                .collect(Collectors.toSet());
+        return jobRegistry.getJobNames()
+                .stream()
+                .filter(jobBeanName -> !jobDefinitions.contains(jobBeanName))
+                .map(jobBeanName ->
+                        new JobDefinitionDTO(
+                                jobBeanName,
+                                "ENABLE",
+                                "0 0/5 * 1/1 * ? *",
+                                "I",
+                                Collections.emptyMap()
+                        )
+                )
+                .toList();
     }
 }
