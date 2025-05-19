@@ -33,7 +33,7 @@ public class JobDefinitionService {
 
     public List<JobDefinition> findAllEnableJobs() {
         //TODO: 상수처리
-        return jobDefinitionRepository.findByState("enable");
+        return jobDefinitionRepository.findByState("ENABLE");
     }
 
     @Transactional
