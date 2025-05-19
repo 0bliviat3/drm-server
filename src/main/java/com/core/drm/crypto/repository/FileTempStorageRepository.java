@@ -11,14 +11,15 @@ public interface FileTempStorageRepository extends JpaRepository<FileTempStorage
 
     @Query(value = """
             SELECT
-            	A
+            	A.*
             FROM t_file_temp_storage A
             LEFT JOIN t_crypto_result B
             ON A.request_id = B.request_id
             WHERE 1 = 1
             AND B.process_state = 'SUCCESS'
             AND B.file_state = 'EXIST'
-            AND TO_CHAR(A.save_time, 'YYYY-MM-DD') = TO_CHAR(NOW() - '1 days'::INTERVAL, 'YYYY-MM-DD')
-            """)
+            AND TO_CHAR(A.save_time, 'YYYY-MM-DD') = TO_CHAR(NOW(), 'YYYY-MM-DD')
+            """, nativeQuery = true)
     List<FileTempStorage> findSavedYesterdayWithSuccessAndExistResult();
+    // - '1 days'::INTERVAL 테스트용으로 생략함
 }
