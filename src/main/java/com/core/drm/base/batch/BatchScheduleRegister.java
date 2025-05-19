@@ -19,6 +19,7 @@ public class BatchScheduleRegister implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws SchedulerException {
+        batchSchedulerService.initJob();
         batchSchedulerService.registryAllEnableJob();
     }
 
