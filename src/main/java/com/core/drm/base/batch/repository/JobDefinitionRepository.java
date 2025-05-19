@@ -11,11 +11,11 @@ public interface JobDefinitionRepository extends JpaRepository<JobDefinition, St
 
     @Query("""
             SELECT
-                *
-            FROM t_job_definition
+            tjd
+            FROM JobDefinition tjd
             WHERE 1 = 1
             AND state = :state
-            AND data_code <> 'D'
+            AND tjd.dataCode <> 'D'
             """)
     List<JobDefinition> findByState(@Param("state") String state);
 }
