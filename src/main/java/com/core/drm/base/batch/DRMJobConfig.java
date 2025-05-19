@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@EnableBatchProcessing
 @RequiredArgsConstructor
 public class DRMJobConfig {
 
@@ -23,7 +22,7 @@ public class DRMJobConfig {
 
     @Bean
     public Job delTempFile(JobRepository jobRepository, Step delTempFileStep) {
-        return new JobBuilder("deleteTempFile", jobRepository)
+        return new JobBuilder("delTempFile", jobRepository)
                 .start(delTempFileStep)
                 .build();
     }
@@ -45,9 +44,4 @@ public class DRMJobConfig {
             return RepeatStatus.FINISHED;
         };
     }
-
-
-
-
-
 }
