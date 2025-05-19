@@ -11,7 +11,6 @@ public record JobDefinitionDTO(
         String jobBeanName,
         String state,
         String cronExpression,
-
         @Nullable String dataCode,
         @Convert(converter = MapToJsonConverter.class) Map<String, String> jobParams
 ) {
