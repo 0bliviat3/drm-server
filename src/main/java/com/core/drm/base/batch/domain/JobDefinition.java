@@ -44,12 +44,12 @@ public class JobDefinition {
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 
-    @Column(name = "job_params", columnDefinition = "jsonb")
+    @Column(name = "job_params")
     @Convert(converter = MapToJsonConverter.class)
     private Map<String, String> jobParams;
 
     @Column(name = "data_code")
-    @ColumnDefault("I")
+    @ColumnDefault("'I'")
     private String dataCode;
 
     @Transient
