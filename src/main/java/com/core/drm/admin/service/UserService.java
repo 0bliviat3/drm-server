@@ -33,8 +33,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User findById(UserDTO userDTO) {
-        return userRepository.findById(userDTO.userId())
+    public User findById(String userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
@@ -44,7 +44,7 @@ public class UserService {
 
     @Transactional
     public User modifyUser(UserDTO userDTO) {
-        User user = findById(userDTO);
+        User user = findById(userDTO.userId());
         String password = Optional.ofNullable(userDTO.password())
                 .orElse(user.getPassword());
         String name = Optional.ofNullable(userDTO.name())
@@ -58,7 +58,7 @@ public class UserService {
 
     @Transactional
     public User deleteUser(UserDTO userDTO) {
-        User user = findById(userDTO);
+        User user = findById(userDTO.userId());
         user.setModifiedTime(LocalDateTime.now());
         user.setDateCode(D);
         return user;
