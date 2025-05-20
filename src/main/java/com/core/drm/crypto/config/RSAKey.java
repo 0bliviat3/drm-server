@@ -1,5 +1,7 @@
 package com.core.drm.crypto.config;
 
+import com.core.drm.crypto.util.PropertiesUtil;
+
 import java.io.IOException;
 import java.security.Key;
 import java.security.KeyPair;
@@ -8,10 +10,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class RSAKey {
 
-    private KeyPair generateKey() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048); //TODO: 키크기, 알고리즘 상수 설정
+    private static final String RSA = "RSA";
+    private static final int KEY_SIZE = 2048;
 
+    private KeyPair generateKey() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance(RSA);
+        keyGen.initialize(KEY_SIZE);
         return keyGen.generateKeyPair();
     }
 
@@ -22,8 +26,10 @@ public class RSAKey {
 
     public void generate() throws NoSuchAlgorithmException, IOException {
         KeyPair keys = generateKey();
-        writeKey(keys.getPrivate(), "RSA PRIVATE KEY", "./private.pem");
-        writeKey(keys.getPublic(), "RSA PUBLIC KEY", "./public.pem");
+        String privateKeyPath = PropertiesUtil.getApplicationProperty("rsa.private.key.path");
+        String publicKeyPath = PropertiesUtil.getApplicationProperty("rsa.public.key.path");
+        writeKey(keys.getPrivate(), "RSA PRIVATE KEY", privateKeyPath);
+        writeKey(keys.getPublic(), "RSA PUBLIC KEY", publicKeyPath);
     }
 
 
