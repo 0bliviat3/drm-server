@@ -4,7 +4,6 @@ import com.core.drm.base.batch.service.TempFileDeleteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -18,11 +17,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 @RequiredArgsConstructor
 public class DRMJobConfig {
 
+    private static final String BEAN_NAME = "delTempFile";
+    private static final String STEP_NAME = "delTempFileStep";
+
     private final TempFileDeleteService tempFileDeleteService;
 
     @Bean
     public Job delTempFile(JobRepository jobRepository, Step delTempFileStep) {
-        return new JobBuilder("delTempFile", jobRepository)
+        return new JobBuilder(BEAN_NAME, jobRepository)
                 .start(delTempFileStep)
                 .build();
     }
@@ -32,7 +34,7 @@ public class DRMJobConfig {
             JobRepository jobRepository,
             Tasklet delTempFileTask,
             PlatformTransactionManager transactionManager) {
-        return new StepBuilder("delTempFileStep", jobRepository)
+        return new StepBuilder(STEP_NAME, jobRepository)
                 .tasklet(delTempFileTask, transactionManager)
                 .build();
     }
