@@ -1,6 +1,7 @@
 package com.core.drm.base.batch;
 
 import com.core.drm.base.batch.domain.JobDefinition;
+import com.core.drm.base.batch.exception.BatchException;
 import com.core.drm.base.batch.service.JobDefinitionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +16,15 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.stereotype.Component;
 
+import static com.core.drm.base.batch.constant.errormessage.BatchExceptionMessage.EXEC_JOB_ERR;
+import static com.core.drm.base.batch.constant.errormessage.BatchExceptionMessage.NOT_FOUND_JOB;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class BatchLauncherJob implements Job {
+
+    private static final String TIMESTAMP = "timestamp";
 
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
@@ -35,17 +41,16 @@ public class BatchLauncherJob implements Job {
 
             jobLauncher.run(job, jobParameters);
         } catch (NoSuchJobException e) {
-            //TODO: 상수처리
-            throw new JobExecutionException("[ERROR] job이 존재하지 않음");
+            throw new BatchException(NOT_FOUND_JOB, e);
         } catch (Exception e) {
-            throw new JobExecutionException("[ERROR] job 실행중 예외 발생", e);
+            throw new BatchException(EXEC_JOB_ERR, e);
         }
     }
 
     private JobParameters initParams(JobDefinition jobDefinition) {
         JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
         jobDefinition.getJobParams().forEach(jobParametersBuilder::addString);
-        jobParametersBuilder.addLong("timestamp", System.currentTimeMillis());
+        jobParametersBuilder.addLong(TIMESTAMP, System.currentTimeMillis());
         return jobParametersBuilder.toJobParameters();
     }
 }
