@@ -16,7 +16,7 @@ public interface CryptoResultRepository extends JpaRepository<CryptoResult, UUID
             UPDATE CryptoResult
             SET fileState = 'REMOVED'
             WHERE 1 = 1
-            AND fileRequest IN :requestIds
+            AND fileRequest.id IN :requestIds
             """)
     void bulkUpdateStateToRemoved(@Param("requestIds") List<UUID> requestIds);
 }
