@@ -1,5 +1,6 @@
 package com.core.drm.crypto.service;
 
+import com.core.drm.base.batch.exception.BatchException;
 import com.core.drm.crypto.constant.ProcessState;
 import com.core.drm.crypto.domain.entity.CryptoHistory;
 import com.core.drm.crypto.domain.entity.CryptoResult;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.core.drm.base.batch.constant.errormessage.BatchExceptionMessage.FAIL_BULK_PROCESS;
 import static com.core.drm.crypto.constant.FileState.EXIST;
 
 @Slf4j
@@ -50,7 +52,7 @@ public class CryptoResultService {
         try {
             cryptoResultRepository.bulkUpdateStateToRemoved(requestIds);
         } catch (Exception e) {
-            //TODO: 예외처리 필요
+            throw new BatchException(FAIL_BULK_PROCESS, e);
         }
 
     }
