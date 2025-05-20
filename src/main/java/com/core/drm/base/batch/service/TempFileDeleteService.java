@@ -16,6 +16,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TempFileDeleteService {
 
+    private static final int DELETE_SIZE = 1000;
+
     private final CryptoResultService cryptoResultService;
     private final FileTempStorageService fileTempStorageService;
 
@@ -30,8 +32,7 @@ public class TempFileDeleteService {
     }
 
     private void resultUpdateFileStateToRemoved(List<UUID> requestIds) {
-        //TODO: 상수처리
-        List<List<UUID>> partitionIDs = ListUtilsKt.partition(requestIds, 1000);
+        List<List<UUID>> partitionIDs = ListUtilsKt.partition(requestIds, DELETE_SIZE);
         for (List<UUID> list : partitionIDs) {
             cryptoResultService.updateFileStateToRemoved(list);
         }
