@@ -15,10 +15,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.core.drm.base.batch.constant.CronExpressionConst.EVERY_5_MINUTES;
+import static com.core.drm.base.batch.constant.JobState.ENABLE;
+import static com.core.drm.base.constant.DataStateCode.I;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BatchSchedulerService {
+
+    private static final String TRIGGER_SALT = "trigger-";
 
     private final JobRegistry jobRegistry;
     private final Scheduler scheduler;
@@ -72,10 +78,9 @@ public class BatchSchedulerService {
     }
 
     private Trigger makeTrigger(JobDetail jobDetail, JobDefinitionDTO jobDefinitionDTO) {
-        //TODO: 상수 처리
         return TriggerBuilder.newTrigger()
                 .forJob(jobDetail)
-                .withIdentity("trigger-" + jobDefinitionDTO.jobBeanName())
+                .withIdentity(TRIGGER_SALT + jobDefinitionDTO.jobBeanName())
                 .withSchedule(CronScheduleBuilder.cronSchedule(jobDefinitionDTO.cronExpression()))
                 .build();
     }
@@ -94,7 +99,6 @@ public class BatchSchedulerService {
     }
 
     private List<JobDefinitionDTO> getUnRegisteredJobList() {
-        //TODO: 상수처리 필요
         Set<String> jobDefinitions = jobDefinitionService.findAllEnableJobs()
                 .stream()
                 .map(JobDefinition::getJobBeanName)
@@ -105,9 +109,9 @@ public class BatchSchedulerService {
                 .map(jobBeanName ->
                         new JobDefinitionDTO(
                                 jobBeanName,
-                                "ENABLE",
-                                "0 0/5 * 1/1 * ? *",
-                                "I",
+                                ENABLE.name(),
+                                EVERY_5_MINUTES.getExpression(),
+                                I.name(),
                                 Collections.emptyMap()
                         )
                 )
