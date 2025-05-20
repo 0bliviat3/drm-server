@@ -19,6 +19,8 @@ import static com.core.drm.crypto.constant.errormessage.CipherExceptionMessage.*
  */
 public class CipherStream implements Closeable {
 
+    private static final int BUFFER_SIZE = 1024;
+
     private final InputStream inputStream;
     private final OutputStream outputStream;
     private final CipherWrapper cipher;
@@ -52,7 +54,7 @@ public class CipherStream implements Closeable {
     }
 
     public void encrypt() {
-        byte[] buffer = new byte[1024]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
+        byte[] buffer = new byte[BUFFER_SIZE];
         int readLength;
 
         try (CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher)) {
@@ -69,7 +71,7 @@ public class CipherStream implements Closeable {
     }
 
     public void decrypt() {
-        byte[] buffer = new byte[1024]; //TODO: os레벨에서 설정가능하도록 프로퍼티로 변경
+        byte[] buffer = new byte[BUFFER_SIZE];
         int readLength;
 
         try (CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher)) {
