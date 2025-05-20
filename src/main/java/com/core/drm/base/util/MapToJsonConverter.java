@@ -1,5 +1,6 @@
 package com.core.drm.base.util;
 
+import com.core.drm.base.exception.ConvertException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,6 +9,9 @@ import jakarta.persistence.Converter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+
+import static com.core.drm.base.constant.errormessage.ConvertExceptionMessage.FAIL_CONVERT_COLUMN;
+import static com.core.drm.base.constant.errormessage.ConvertExceptionMessage.FAIL_CONVERT_MAP;
 
 @Slf4j
 @Converter(autoApply = false)
@@ -18,8 +22,7 @@ public class MapToJsonConverter implements AttributeConverter<Map<String, String
         try {
             return new ObjectMapper().writeValueAsString(stringStringMap);
         } catch (JsonProcessingException e) {
-            //TODO: 예외 처리
-            throw new RuntimeException(e);
+            throw new ConvertException(FAIL_CONVERT_COLUMN, e);
         }
     }
 
@@ -28,8 +31,7 @@ public class MapToJsonConverter implements AttributeConverter<Map<String, String
         try {
             return new ObjectMapper().readValue(s, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
-            //TODO: 예외 처리
-            throw new RuntimeException(e);
+            throw new ConvertException(FAIL_CONVERT_MAP, e);
         }
     }
 }
