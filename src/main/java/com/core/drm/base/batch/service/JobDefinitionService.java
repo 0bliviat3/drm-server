@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.core.drm.base.batch.constant.JobState.ENABLE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,8 +34,7 @@ public class JobDefinitionService {
     }
 
     public List<JobDefinition> findAllEnableJobs() {
-        //TODO: 상수처리
-        return jobDefinitionRepository.findByState("ENABLE");
+        return jobDefinitionRepository.findByState(ENABLE.name());
     }
 
     @Transactional
