@@ -18,22 +18,23 @@ public class RequestHistoryService {
     private final RequestHistoryRepository requestHistoryRepository;
     private final UserService userService;
 
-    public RequestHistory saveRequestHistory(RequestHistoryDTO requestHistoryDTO) {
+    public RequestHistoryDTO saveRequestHistory(RequestHistoryDTO requestHistoryDTO) {
         RequestHistory requestHistory = RequestHistory.builder()
                 .user(userService.findById(requestHistoryDTO.userId()))
                 .requestIP(requestHistoryDTO.requestIP())
                 .requestTime(requestHistoryDTO.requestTime())
                 .build();
 
-        return requestHistoryRepository.save(requestHistory);
+        return requestHistoryRepository.save(requestHistory).toDTO();
     }
 
-    public RequestHistory findById(UUID requestId) {
+    public RequestHistoryDTO findById(UUID requestId) {
         return requestHistoryRepository.findById(requestId)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(EntityNotFoundException::new).toDTO();
     }
 
-    public Page<RequestHistory> findAll(Pageable pageable) {
-        return requestHistoryRepository.findAll(pageable);
+    public Page<RequestHistoryDTO> findAll(Pageable pageable) {
+        return requestHistoryRepository.findAll(pageable)
+                .map(RequestHistory::toDTO);
     }
 }
