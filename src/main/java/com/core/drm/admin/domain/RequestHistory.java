@@ -1,5 +1,6 @@
 package com.core.drm.admin.domain;
 
+import com.core.drm.admin.dto.RequestHistoryDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,5 +33,15 @@ public class RequestHistory {
 
     @Column(name = "request_time")
     private LocalDateTime requestTime;
+
+    @Transient
+    public RequestHistoryDTO toDTO() {
+        return new RequestHistoryDTO(
+                requestId,
+                user.getUserId(),
+                requestIP,
+                requestURL,
+                requestTime);
+    }
 
 }
