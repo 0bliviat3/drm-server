@@ -1,5 +1,6 @@
 package com.core.drm.admin.domain;
 
+import com.core.drm.admin.dto.UserDTO;
 import com.core.drm.base.constant.DataStateCode;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,5 +34,18 @@ public class User {
 
     @Column(name = "data_code")
     @Enumerated(EnumType.STRING)
-    private DataStateCode dateCode;
+    private DataStateCode dataCode;
+
+    @Column(name = "password_salt")
+    private String passwordSalt;
+
+    @Transient
+    public UserDTO toDTOWithoutPassWord() {
+        return UserDTO.builder()
+                .userId(userId)
+                .name(name)
+                .createTime(createTime)
+                .modifiedTime(modifiedTime)
+                .build();
+    }
 }
