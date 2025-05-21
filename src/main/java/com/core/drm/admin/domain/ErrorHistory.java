@@ -1,5 +1,6 @@
 package com.core.drm.admin.domain;
 
+import com.core.drm.admin.dto.ErrorHistoryDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,4 +35,16 @@ public class ErrorHistory {
 
     @Column(name = "stack_trace", columnDefinition = "LONGTEXT")
     private String stackTrace;
+
+    @Transient
+    public ErrorHistoryDTO toDTO() {
+        return new ErrorHistoryDTO(
+                errorId,
+                errorCode,
+                errorMessage,
+                returnMessage,
+                eventTime,
+                stackTrace
+        );
+    }
 }

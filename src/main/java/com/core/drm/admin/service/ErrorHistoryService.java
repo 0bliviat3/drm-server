@@ -17,7 +17,7 @@ public class ErrorHistoryService {
 
     private final ErrorHistoryRepository errorHistoryRepository;
 
-    public ErrorHistory saveErrorHistory(ErrorHistoryDTO errorHistoryDTO) {
+    public ErrorHistoryDTO saveErrorHistory(ErrorHistoryDTO errorHistoryDTO) {
         ErrorHistory errorHistory = ErrorHistory.builder()
                 .errorCode(errorHistoryDTO.errorCode())
                 .errorMessage(errorHistoryDTO.errorMessage())
@@ -26,15 +26,17 @@ public class ErrorHistoryService {
                 .stackTrace(errorHistoryDTO.stackTrace())
                 .build();
 
-        return errorHistoryRepository.save(errorHistory);
+        return errorHistoryRepository.save(errorHistory).toDTO();
     }
 
-    public ErrorHistory findById(UUID errorId) {
+    public ErrorHistoryDTO findById(UUID errorId) {
         return errorHistoryRepository.findById(errorId)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(EntityNotFoundException::new)
+                .toDTO();
     }
 
-    public Page<ErrorHistory> findAll(Pageable pageable) {
-        return errorHistoryRepository.findAll(pageable);
+    public Page<ErrorHistoryDTO> findAll(Pageable pageable) {
+        return errorHistoryRepository.findAll(pageable)
+                .map(ErrorHistory::toDTO);
     }
 }
