@@ -23,44 +23,48 @@ public class UserService {
 
     public User saveUser(UserDTO userDTO) {
         User user = User.builder()
-                .userId(userDTO.userId())
-                .name(userDTO.name())
-                .password(userDTO.password())
+                .userId(userDTO.getUserId())
+                .name(userDTO.getName())
+                .password(userDTO.getPassword())
                 .createTime(LocalDateTime.now())
-                .dateCode(I)
+                .dataCode(I)
+                .passwordSalt(userDTO.getPasswordSalt())
                 .build();
 
         return userRepository.save(user);
     }
 
     public User findById(String userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByIdAndDataCodeNot(userId, D)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+        return userRepository.findAllByDataCodeNot(pageable, D);
     }
 
     @Transactional
     public User modifyUser(UserDTO userDTO) {
-        User user = findById(userDTO.userId());
-        String password = Optional.ofNullable(userDTO.password())
+        User user = findById(userDTO.getUserId());
+        String password = Optional.ofNullable(userDTO.getPassword())
                 .orElse(user.getPassword());
-        String name = Optional.ofNullable(userDTO.name())
+        String name = Optional.ofNullable(userDTO.getName())
                 .orElse(user.getName());
+        String passwordSalt = Optional.ofNullable(userDTO.getPasswordSalt())
+                .orElse(user.getPasswordSalt());
         user.setPassword(password);
+        user.setPasswordSalt(passwordSalt);
         user.setName(name);
         user.setModifiedTime(LocalDateTime.now());
-        user.setDateCode(U);
+        user.setDataCode(U);
         return user;
     }
 
     @Transactional
     public User deleteUser(UserDTO userDTO) {
-        User user = findById(userDTO.userId());
+        User user = findById(userDTO.getUserId());
         user.setModifiedTime(LocalDateTime.now());
-        user.setDateCode(D);
+        user.setDataCode(D);
         return user;
     }
 
