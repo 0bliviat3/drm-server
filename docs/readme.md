@@ -160,6 +160,49 @@ join
 4. 비밀번호 비교
 5. 세션 생성(컨트롤러)
 
+### 배치로그 -> view 생성후 매핑
+- @SubSelect 사용
+- v_batch_job_execution
+```sql 
+SELECT
+    bje.job_execution_id,
+	bji.job_name,
+	bje.create_time,
+	bje.start_time,
+	bje.end_time,
+	bje.status,
+	bje.exit_code,
+	bje.exit_message,
+	bje.last_updated
+FROM batch_job_execution bje
+JOIN batch_job_instance bji
+ON bje.job_instance_id = bji.job_instance_id
+;
+```
+- v_batch_step_execution
+```sql
+SELECT
+    bse.step_execution_id,
+	bse.step_name,
+	bse.create_time,
+	bse.start_time,
+	bse.end_time,
+	bse.status,
+	bse.commit_count,
+	bse.read_count,
+	bse.filter_count,
+	bse.write_count,
+	bse.read_skip_count,
+	bse.write_skip_count,
+	bse.process_skip_count,
+	bse.rollback_count,
+	bse.exit_code,
+	bse.exit_message,
+	bse.last_updated
+FROM batch_step_execution bse
+```
+각각 생성 후 사용할것
+
 ### DB 설계 (PostgreSQL)
 파일 암복호화 요청 테이블
 - pk
