@@ -7,13 +7,18 @@ import org.bouncycastle.crypto.engines.SEEDEngine;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.junit.jupiter.api.Test;
+import org.postgresql.util.PasswordUtil;
 
 import javax.crypto.*;
 import javax.security.auth.DestroyFailedException;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Hashtable;
 import java.util.function.Function;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CryptoTest {
 
@@ -33,6 +38,16 @@ public class CryptoTest {
 
     private String encodeToString(byte[] bytes) {
         return new String(Base64.getEncoder().encode(bytes), StandardCharsets.UTF_8);
+    }
+
+    @Test
+    void 비밀번호_해싱() throws NoSuchAlgorithmException {
+        String password = "qwer1234";
+        String id = "admin";
+        String hashPass = PasswordUtil.encodeScramSha256(password.toCharArray(), 3, id.getBytes());
+//        System.out.println(hashPass);
+        String dbHash = "SCRAM-SHA-256$3:YWRtaW4=$hdhaD6AI5F5XMca9RHixy5cNEQ/QihzNzErdgSALxQQ=:WtxYkG/5GukekIZBGPs+GI64SvPcAVyZzZwWG+ty06M=";
+        assertThat(hashPass).isEqualTo(dbHash);
     }
 
     @Test
