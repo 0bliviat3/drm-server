@@ -10,7 +10,7 @@ public record ErrorHistoryDTO(
         String errorCode,
         String errorMessage,
         String returnMessage,
-        LocalDateTime eventTime,
+        String eventTime,
         String stackTrace
 ) {
 }
