@@ -30,7 +30,7 @@ public class ErrorHistory {
     @Column(name = "return_message")
     private String returnMessage;
 
-    @Column(name = "event_time", length = 20)
+    @Column(name = "event_time")
     private String eventTime;
 
     @Column(name = "stack_trace", length = 2500)
