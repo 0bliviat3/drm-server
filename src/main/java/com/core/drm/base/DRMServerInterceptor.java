@@ -24,13 +24,15 @@ public class DRMServerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.debug("=====pre handle======");
-        saveRequest(request);
+        //saveRequest(request);
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 
     private void saveRequest(HttpServletRequest request) {
         //TODO: session helper 구현 후 userId 처리할것
-        String userId = request.getRequestId();
+        //기본아이디: guest 생성해야함 (로그인시도는 guest로 기록)
+        //또는 예외처리 필요
+        String userId = null;
         String requestIP = request.getRemoteAddr();
         String requestURL = request.getRequestURI();
         LocalDateTime requestTime = LocalDateTime.now();
