@@ -8,6 +8,8 @@ import com.core.drm.crypto.domain.entity.FileRequest;
 import com.core.drm.crypto.repository.CryptoResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,7 +56,10 @@ public class CryptoResultService {
         } catch (Exception e) {
             throw new BatchException(FAIL_BULK_PROCESS, e);
         }
+    }
 
+    public Page<CryptoResult> findAll(Pageable pageable) {
+        return cryptoResultRepository.findAll(pageable);
     }
 
 }

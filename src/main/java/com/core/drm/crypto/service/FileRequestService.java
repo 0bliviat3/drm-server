@@ -8,6 +8,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,6 +43,10 @@ public class FileRequestService {
         String errMessage = String.format(NOT_FOUND_ID.getMessage(), FileRequest.class.getName(), requestId.toString());
         return fileRequestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException(errMessage));
+    }
+
+    public Page<FileRequest> findAll(Pageable pageable) {
+        return fileRequestRepository.findAll(pageable);
     }
 
 }

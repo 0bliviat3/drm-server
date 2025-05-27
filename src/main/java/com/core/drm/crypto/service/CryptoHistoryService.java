@@ -7,6 +7,8 @@ import com.core.drm.crypto.repository.CryptoHistoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,9 @@ public class CryptoHistoryService {
         return cryptoHistoryRepository
                 .findFirstByFileRequestOrderByProcessTimeDesc(fileRequest)
                 .orElseThrow(EntityNotFoundException::new);
+    }
+    public Page<CryptoHistory> findAll(Pageable pageable) {
+        return cryptoHistoryRepository.findAll(pageable);
     }
 
 }
