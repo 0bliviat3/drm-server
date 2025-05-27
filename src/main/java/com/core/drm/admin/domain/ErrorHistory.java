@@ -33,7 +33,7 @@ public class ErrorHistory {
     @Column(name = "event_time")
     private LocalDateTime eventTime;
 
-    @Column(name = "stack_trace", columnDefinition = "LONGTEXT")
+    @Column(name = "stack_trace", length = 2500)
     private String stackTrace;
 
     @Transient
