@@ -1,5 +1,7 @@
 package com.core.drm.crypto.service;
 
+import com.core.drm.admin.dto.ErrorHistoryDTO;
+import com.core.drm.admin.service.ErrorHistoryService;
 import com.core.drm.crypto.constant.errormessage.ResponseMessage;
 import com.core.drm.crypto.domain.entity.CryptoHistory;
 import com.core.drm.crypto.domain.entity.FileRequest;
@@ -25,9 +27,9 @@ import static com.core.drm.crypto.constant.errormessage.ResponseMessage.*;
 @RequiredArgsConstructor
 public class DRMExceptionService {
 
-    //TODO: 에러 저장 서비스 추가
     private final CryptoHistoryService cryptoHistoryService;
     private final CryptoResultService cryptoResultService;
+    private final ErrorHistoryService errorHistoryService;
 
     public void saveFail() {
         CryptoHistory cryptoHistory =
@@ -36,21 +38,31 @@ public class DRMExceptionService {
         ThreadLocalMapUtil.clear();
     }
 
-    public ExceptionResponse wrapRuntimeException(Exception exception, HttpServletRequest request) {
-        saveFail();
+    private ErrorHistoryDTO saveHistory(Exception exception) {
         String eventTime = String.valueOf(LocalDateTime.now());
         ResponseMessage responseMessage = checkExceptionType(exception);
+        return errorHistoryService.saveException(exception, eventTime, responseMessage);
+    }
 
-        return new ExceptionResponse(eventTime, responseMessage.getCode(), responseMessage.getMessage());
+    public ExceptionResponse wrapRuntimeException(Exception exception, HttpServletRequest request) {
+        saveFail();
+        ErrorHistoryDTO errorHistoryDTO = saveHistory(exception);
+        return new ExceptionResponse(
+                errorHistoryDTO.eventTime(),
+                errorHistoryDTO.errorCode(),
+                errorHistoryDTO.errorMessage());
     }
 
     public FileExceptionResponse wrapException(Exception exception, HttpServletRequest request) {
         saveFail();
-        String eventTime = String.valueOf(LocalDateTime.now());
-        ResponseMessage responseMessage = checkExceptionType(exception);
+        ErrorHistoryDTO errorHistoryDTO = saveHistory(exception);
         String fileName = getCurrentRequestFileName(request);
 
-        return new FileExceptionResponse(eventTime, responseMessage.getCode(), responseMessage.getMessage(), fileName);
+        return new FileExceptionResponse(
+                errorHistoryDTO.eventTime(),
+                errorHistoryDTO.errorCode(),
+                errorHistoryDTO.errorMessage(),
+                fileName);
     }
 
     private String getCurrentRequestFileName(HttpServletRequest request) {
