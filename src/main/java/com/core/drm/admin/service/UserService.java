@@ -35,7 +35,7 @@ public class UserService {
     }
 
     public User findById(String userId) {
-        return userRepository.findByIdAndDataCodeNot(userId, D)
+        return userRepository.findByUserIdAndDataCodeNot(userId, D)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
