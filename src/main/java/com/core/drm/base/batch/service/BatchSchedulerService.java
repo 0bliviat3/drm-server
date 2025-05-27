@@ -90,15 +90,18 @@ public class BatchSchedulerService {
     존재하지 않을 경우 최초 bean 삽입
      */
     public void initJob() {
-        List<JobDefinitionDTO> jobDefinitionDTOS = getUnRegisteredJobList();
-        if (jobDefinitionDTOS.isEmpty()) {
+        List<JobDefinitionDTO> jobDefinitionDTOs = getUnRegisteredJobList();
+        if (jobDefinitionDTOs.isEmpty()) {
             return;
         }
-        jobDefinitionDTOS
+        jobDefinitionDTOs
                 .forEach(jobDTO -> jobDefinitionService.saveJobDefinition(jobDTO.toEntity()));
     }
 
     private List<JobDefinitionDTO> getUnRegisteredJobList() {
+        //TODO: dto 변환 로직 추가해서 기존 방식 수정할것
+        //현재 논리적 오류있음 -> dto 변환 방식에서 하드코딩값 강제 삽입중
+        //최초기동시엔 강제삽입이 필요한 경우가 있지만, 재기동시엔 기존값을 불러와야 함
         Set<String> jobDefinitions = jobDefinitionService.findAllEnableJobs()
                 .stream()
                 .map(JobDefinition::getJobBeanName)
