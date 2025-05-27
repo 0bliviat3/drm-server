@@ -3,12 +3,14 @@ package com.core.drm.admin.service;
 import com.core.drm.admin.domain.ErrorHistory;
 import com.core.drm.admin.dto.ErrorHistoryDTO;
 import com.core.drm.admin.repository.ErrorHistoryRepository;
+import com.core.drm.crypto.constant.errormessage.ResponseMessage;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 @Service
@@ -17,13 +19,13 @@ public class ErrorHistoryService {
 
     private final ErrorHistoryRepository errorHistoryRepository;
 
-    public ErrorHistoryDTO saveErrorHistory(ErrorHistoryDTO errorHistoryDTO) {
+    public ErrorHistoryDTO saveException(Exception exception, String eventTime, ResponseMessage responseMessage) {
         ErrorHistory errorHistory = ErrorHistory.builder()
-                .errorCode(errorHistoryDTO.errorCode())
-                .errorMessage(errorHistoryDTO.errorMessage())
-                .eventTime(errorHistoryDTO.eventTime())
-                .returnMessage(errorHistoryDTO.returnMessage())
-                .stackTrace(errorHistoryDTO.stackTrace())
+                .errorCode(responseMessage.getCode())
+                .eventTime(eventTime)
+                .returnMessage(responseMessage.getMessage())
+                .errorMessage(exception.getMessage())
+                .stackTrace(Arrays.toString(exception.getStackTrace()))
                 .build();
 
         return errorHistoryRepository.save(errorHistory).toDTO();
