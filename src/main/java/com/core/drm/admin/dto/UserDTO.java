@@ -18,7 +18,7 @@ public class UserDTO {
     @Nullable
     private String name;
     @Nullable
-    private DataStateCode dateCode;
+    private DataStateCode dataCode;
     @Nullable
     private String passwordSalt;
     @Nullable
