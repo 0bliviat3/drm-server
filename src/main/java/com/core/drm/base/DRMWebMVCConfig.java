@@ -20,6 +20,6 @@ public class DRMWebMVCConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(drmServerInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/**", "/js/**", "/css/**");
+                .excludePathPatterns("/sign-up", "/api/**", "/js/**", "/css/**");
     }
 }
