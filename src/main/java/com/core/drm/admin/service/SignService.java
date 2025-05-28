@@ -7,7 +7,6 @@ import com.core.drm.crypto.util.PropertiesUtil;
 import lombok.RequiredArgsConstructor;
 import org.postgresql.util.PasswordUtil;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -135,8 +134,7 @@ public class SignService {
                 .toDTOWithoutPassWord();
     }
 
-    public Page<UserDTO> findAll(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public Page<UserDTO> findAll(Pageable pageable) {
         return userService.findAll(pageable).map(User::toDTOWithoutPassWord);
     }
 
