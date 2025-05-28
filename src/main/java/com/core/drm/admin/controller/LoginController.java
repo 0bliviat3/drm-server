@@ -1,0 +1,73 @@
+package com.core.drm.admin.controller;
+
+import com.core.drm.admin.dto.UserDTO;
+import com.core.drm.admin.service.SignService;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+public class LoginController {
+
+    private final SignService signService;
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<String> signUp(@RequestBody UserDTO userDTO) {
+        signService.signUp(userDTO);
+        return ResponseEntity.ok("회원가입 성공");
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<UserDTO> signIn(@RequestBody UserDTO userDTO, HttpSession session) {
+        UserDTO user = signService.signIn(userDTO);
+        session.invalidate();
+        session.setAttribute("userId", user.getUserId());
+        session.setAttribute("userName", user.getName());
+
+        user.setPassword(null);
+        user.setPasswordSalt(null);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/sign-out")
+    public ResponseEntity<String> signOut(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("로그아웃 성공");
+    }
+
+    @PutMapping("/user")
+    public ResponseEntity<UserDTO> modifyUser(@RequestBody UserDTO userDTO) {
+        UserDTO user = signService.modifyUser(userDTO);
+        user.setPasswordSalt(null);
+        user.setPassword(null);
+
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/user")
+    public ResponseEntity<String> deleteUser(@RequestBody UserDTO userDTO, HttpSession session) {
+        UserDTO user = signService.deleteUser(userDTO);
+        boolean valid = session.getAttribute("userId").equals(user.getUserId());
+        if (valid) {
+            session.invalidate();
+        }
+        return ResponseEntity.ok("삭제 성공");
+    }
+
+    @GetMapping("/users")
+    public List<UserDTO> getUserList(
+            @RequestParam(value = "page", defaultValue = "0") int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        return signService.findAll(pageRequest)
+                .getContent();
+    }
+
+}
