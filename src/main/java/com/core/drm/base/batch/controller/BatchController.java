@@ -10,12 +10,16 @@ import com.core.drm.base.batch.service.JobExecutionService;
 import com.core.drm.base.batch.service.StepExecutionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.core.drm.base.batch.constant.JobState.DISABLE;
+import static com.core.drm.base.constant.DataStateCode.U;
 
 @Slf4j
 @RestController
@@ -47,6 +51,7 @@ public class BatchController {
                 .getContent();
     }
 
+    @GetMapping("/jobs")
     public List<JobDefinition> getJobDefinitionList(
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -56,6 +61,21 @@ public class BatchController {
                 .getContent();
     }
 
+    @PutMapping("/batch-management/edit")
+    public ResponseEntity<String> modifyBatch(@RequestBody JobDefinitionDTO jobDefinitionDTO) throws SchedulerException {
+        jobDefinitionDTO.setDataCode(U.name());
+        batchSchedulerService.updateSchedule(jobDefinitionDTO);
+        return ResponseEntity.ok("배치 수정 완료");
+    }
+
+    @PutMapping("/batch-management/disable")
+    public ResponseEntity<String> disableBatch(String jobBeanName) throws SchedulerException {
+        JobDefinitionDTO jobDefinitionDTO = jobDefinitionService.findByJobBeanName(jobBeanName).toDTO();
+        jobDefinitionDTO.setState(DISABLE.name());
+        batchSchedulerService.deleteSchedule(jobDefinitionDTO);
+        log.debug(jobDefinitionDTO.toString());
+        return ResponseEntity.ok("배치 삭제 완료");
+    }
 
 
 }
