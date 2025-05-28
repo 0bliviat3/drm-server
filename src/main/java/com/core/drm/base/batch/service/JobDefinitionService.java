@@ -45,11 +45,12 @@ public class JobDefinitionService {
 
     @Transactional
     public void updateJobDefinition(JobDefinitionDTO jobDefinitionDTO) {
-        JobDefinition jobDefinition = findByJobBeanName(jobDefinitionDTO.jobBeanName());
-        jobDefinition.setJobParams(jobDefinitionDTO.jobParams());
-        jobDefinition.setDataCode(jobDefinitionDTO.dataCode());
+        JobDefinition jobDefinition = findByJobBeanName(jobDefinitionDTO.getJobBeanName());
+        jobDefinition.setState(jobDefinitionDTO.getState());
+        jobDefinition.setJobParams(jobDefinitionDTO.getJobParams());
+        jobDefinition.setDataCode(jobDefinitionDTO.getDataCode());
         jobDefinition.setModifiedDate(LocalDateTime.now());
-        jobDefinition.setCronExpression(jobDefinitionDTO.cronExpression());
+        jobDefinition.setCronExpression(jobDefinitionDTO.getCronExpression());
     }
 
 }

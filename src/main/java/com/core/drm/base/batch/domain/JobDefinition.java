@@ -9,6 +9,8 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import static com.core.drm.base.batch.constant.JobState.DISABLE;
+
 @Entity
 @Table(name = "t_job_definition")
 @Getter
@@ -54,6 +56,12 @@ public class JobDefinition {
 
     @Transient
     public JobDefinitionDTO toDTO() {
-        return new JobDefinitionDTO(jobBeanName, state, cronExpression, dataCode, jobParams);
+        return JobDefinitionDTO.builder()
+                .jobBeanName(jobBeanName)
+                .state(state)
+                .dataCode(dataCode)
+                .jobParams(jobParams)
+                .cronExpression(cronExpression)
+                .build();
     }
 }

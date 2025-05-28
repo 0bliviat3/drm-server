@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.core.drm.base.batch.constant.CronExpressionConst.EVERY_5_MINUTES;
+import static com.core.drm.base.batch.constant.JobState.DISABLE;
 import static com.core.drm.base.batch.constant.JobState.ENABLE;
 import static com.core.drm.base.constant.DataStateCode.I;
 
@@ -42,7 +43,7 @@ public class BatchSchedulerService {
 
     public boolean isExistJob(JobDefinitionDTO jobDTO) {
         try {
-            jobDefinitionService.findByJobBeanName(jobDTO.jobBeanName());
+            jobDefinitionService.findByJobBeanName(jobDTO.getJobBeanName());
             return true;
         } catch (EntityNotFoundException e) {
             return false;
@@ -60,7 +61,7 @@ public class BatchSchedulerService {
 
     public void deleteSchedule(JobDefinitionDTO jobDTO) throws SchedulerException {
         jobDefinitionService.updateJobDefinition(jobDTO);
-        scheduler.deleteJob(JobKey.jobKey(jobDTO.jobBeanName()));
+        scheduler.deleteJob(JobKey.jobKey(jobDTO.getJobBeanName()));
     }
 
     public void updateSchedule(JobDefinitionDTO jobDTO) throws SchedulerException {
@@ -72,7 +73,7 @@ public class BatchSchedulerService {
 
     private JobDetail makeJobDetail(JobDefinitionDTO jobDefinitionDTO) {
         return JobBuilder.newJob(BatchLauncherJob.class)
-                .withIdentity(jobDefinitionDTO.jobBeanName())
+                .withIdentity(jobDefinitionDTO.getJobBeanName())
                 .storeDurably()
                 .build();
     }
@@ -80,8 +81,8 @@ public class BatchSchedulerService {
     private Trigger makeTrigger(JobDetail jobDetail, JobDefinitionDTO jobDefinitionDTO) {
         return TriggerBuilder.newTrigger()
                 .forJob(jobDetail)
-                .withIdentity(TRIGGER_SALT + jobDefinitionDTO.jobBeanName())
-                .withSchedule(CronScheduleBuilder.cronSchedule(jobDefinitionDTO.cronExpression()))
+                .withIdentity(TRIGGER_SALT + jobDefinitionDTO.getJobBeanName())
+                .withSchedule(CronScheduleBuilder.cronSchedule(jobDefinitionDTO.getCronExpression()))
                 .build();
     }
 
@@ -110,13 +111,13 @@ public class BatchSchedulerService {
                 .stream()
                 .filter(jobBeanName -> !jobDefinitions.contains(jobBeanName))
                 .map(jobBeanName ->
-                        new JobDefinitionDTO(
-                                jobBeanName,
-                                ENABLE.name(),
-                                EVERY_5_MINUTES.getExpression(),
-                                I.name(),
-                                Collections.emptyMap()
-                        )
+                        JobDefinitionDTO.builder()
+                                .jobBeanName(jobBeanName)
+                                .state(ENABLE.name())
+                                .dataCode(I.name())
+                                .jobParams(Collections.emptyMap())
+                                .cronExpression(EVERY_5_MINUTES.getExpression())
+                                .build()
                 )
                 .toList();
     }
