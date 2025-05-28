@@ -24,7 +24,7 @@ public class DRMExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ExceptionResponse handleRuntimeException(
-            IllegalStateException ex,
+            RuntimeException ex,
             HttpServletRequest request) {
 
         log.error("RuntimeException error handler");
