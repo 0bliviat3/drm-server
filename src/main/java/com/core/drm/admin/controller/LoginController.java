@@ -2,6 +2,9 @@ package com.core.drm.admin.controller;
 
 import com.core.drm.admin.dto.UserDTO;
 import com.core.drm.admin.service.SignService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +28,22 @@ public class LoginController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<UserDTO> signIn(@RequestBody UserDTO userDTO, HttpSession session) {
+    public ResponseEntity<UserDTO> signIn(@RequestBody UserDTO userDTO, HttpSession session, HttpServletResponse response) {
         UserDTO user = signService.signIn(userDTO);
         session.setAttribute("userId", user.getUserId());
         session.setAttribute("userName", user.getName());
+        setCookies(user, response);
 
         user.setPassword(null);
         user.setPasswordSalt(null);
         return ResponseEntity.ok(user);
+    }
+
+    private void setCookies(UserDTO user, HttpServletResponse response) {
+        Cookie idCookie = new Cookie("userId", user.getUserId());
+        Cookie nameCookie = new Cookie("userName", user.getName());
+        response.addCookie(idCookie);
+        response.addCookie(nameCookie);
     }
 
     @GetMapping("/sign-out")
