@@ -6,6 +6,7 @@ import com.core.drm.base.constant.DataStateCode;
 import com.core.drm.base.batch.domain.JobDefinition;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.quartz.CronExpression;
 
@@ -85,11 +86,12 @@ public class JobDefinitionDTO {
                 .build();
     }
 
-    public JobDefinitionDTO initDTO() {
+
+    public JobDefinitionDTO (String jobBeanName) {
+        this.jobBeanName = jobBeanName;
         this.state = Optional.ofNullable(state).orElse(ENABLE.name());
         this.dataCode = Optional.ofNullable(dataCode).orElse(I.name());
         this.jobParams = Optional.ofNullable(jobParams).orElse(Collections.emptyMap());
         this.cronExpression = Optional.ofNullable(cronExpression).orElse(EVERY_5_MINUTES.getExpression());
-        return this;
     }
 }

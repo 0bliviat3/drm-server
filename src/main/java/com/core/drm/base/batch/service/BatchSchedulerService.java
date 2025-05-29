@@ -104,12 +104,7 @@ public class BatchSchedulerService {
         return jobRegistry.getJobNames()
                 .stream()
                 .filter(jobBeanName -> !jobBeanNames.contains(jobBeanName)) //DB 에서 조회되지 않는 job
-                .map(jobBeanName ->
-                        JobDefinitionDTO.builder()
-                                .jobBeanName(jobBeanName)
-                                .build()
-                                .initDTO()
-                )
+                .map(JobDefinitionDTO::new)
                 .toList();
     }
 }
