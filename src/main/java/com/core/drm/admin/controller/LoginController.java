@@ -27,7 +27,6 @@ public class LoginController {
     @PostMapping("/sign-in")
     public ResponseEntity<UserDTO> signIn(@RequestBody UserDTO userDTO, HttpSession session) {
         UserDTO user = signService.signIn(userDTO);
-        session.invalidate();
         session.setAttribute("userId", user.getUserId());
         session.setAttribute("userName", user.getName());
 

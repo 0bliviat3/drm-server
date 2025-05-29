@@ -5,11 +5,13 @@ import com.core.drm.admin.dto.UserDTO;
 import com.core.drm.admin.exception.UserException;
 import com.core.drm.crypto.util.PropertiesUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PasswordUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -17,6 +19,7 @@ import java.util.Base64;
 
 import static com.core.drm.admin.constant.UserExceptionMessage.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SignService {
@@ -38,7 +41,7 @@ public class SignService {
         validateHash(userDTO);
         char[] password = userDTO.getPassword().toCharArray();
         int iteration = Integer.parseInt(PropertiesUtil.getApplicationProperty("password.iteration"));
-        byte[] salt = userDTO.getPasswordSalt().getBytes();
+        byte[] salt = userDTO.getPasswordSalt().getBytes(StandardCharsets.UTF_8);
 
         return PasswordUtil.encodeScramSha256(password, iteration, salt);
     }
@@ -64,9 +67,10 @@ public class SignService {
 
     public boolean verifyUser(UserDTO userDTO) {
         User user = userService.findById(userDTO.getUserId());
+        userDTO.setPasswordSalt(user.getPasswordSalt());
         return MessageDigest.isEqual(
-                hashPassword(userDTO).getBytes(),
-                user.getPassword().getBytes());
+                hashPassword(userDTO).getBytes(StandardCharsets.UTF_8),
+                user.getPassword().getBytes(StandardCharsets.UTF_8));
     }
 
     private void saveUser(UserDTO userDTO) {
