@@ -18,8 +18,8 @@ public interface FileTempStorageRepository extends JpaRepository<FileTempStorage
             WHERE 1 = 1
             AND B.process_state = 'SUCCESS'
             AND B.file_state = 'EXIST'
-            AND TO_CHAR(A.save_time, 'YYYY-MM-DD') = TO_CHAR(NOW(), 'YYYY-MM-DD')
+            AND TO_CHAR(A.save_time, 'YYYY-MM-DD') = TO_CHAR(NOW() - '1 days'::INTERVAL, 'YYYY-MM-DD')
             """, nativeQuery = true)
     List<FileTempStorage> findSavedYesterdayWithSuccessAndExistResult();
-    // - '1 days'::INTERVAL 테스트용으로 생략함
+    // - '1 days'::INTERVAL 활성화 .. 2025.05.29
 }

@@ -1,5 +1,6 @@
 package com.core.drm.crypto.service;
 
+import com.core.drm.admin.dto.CryptoRequestDTO;
 import com.core.drm.crypto.constant.CipherType;
 import com.core.drm.crypto.domain.entity.FileRequest;
 import com.core.drm.crypto.repository.FileRequestRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static com.core.drm.crypto.constant.errormessage.EntityExceptionMessage.NOT_FOUND_ID;
@@ -47,6 +49,10 @@ public class FileRequestService {
 
     public Page<FileRequest> findAll(Pageable pageable) {
         return fileRequestRepository.findAll(pageable);
+    }
+
+    public List<CryptoRequestDTO> countDailyRequestGroupByType() {
+        return fileRequestRepository.countRequestByTypeToday();
     }
 
 }

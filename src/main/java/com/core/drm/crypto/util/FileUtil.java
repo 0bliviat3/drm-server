@@ -64,6 +64,7 @@ public class FileUtil {
     파일 임시저장
      */
     private static void saveTempFile(String path, byte[] fileData) {
+        log.debug("파일경로: {}", path);
         try (FileOutputStream outputStream = new FileOutputStream(path)) {
             outputStream.write(fileData);
         } catch (IOException e) {

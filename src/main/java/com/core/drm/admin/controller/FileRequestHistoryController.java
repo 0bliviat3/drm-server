@@ -1,5 +1,6 @@
 package com.core.drm.admin.controller;
 
+import com.core.drm.admin.dto.CryptoRequestDTO;
 import com.core.drm.crypto.domain.entity.FileRequest;
 import com.core.drm.crypto.service.FileRequestService;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,10 @@ public class FileRequestHistoryController {
         return fileRequestService
                 .findAll(pageRequest)
                 .getContent();
+    }
+
+    @GetMapping("/crypto-request/stats")
+    public List<CryptoRequestDTO> getDailyCryptoCount() {
+        return fileRequestService.countDailyRequestGroupByType();
     }
 }
