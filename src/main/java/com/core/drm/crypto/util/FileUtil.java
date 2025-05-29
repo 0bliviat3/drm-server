@@ -80,7 +80,7 @@ public class FileUtil {
         String saveFileName = generateFileName(file.getOriginalFilename());
         //임시저장 경로 가져오기
         String filePath = Optional.ofNullable(tempPath)
-                .orElse(PropertiesUtil.getApplicationProperty(TEMP_FILE_SRC));
+                .orElse(getPropertyPath(TEMP_FILE_SRC));
 
         //임시경로 + 임시파일명으로 저장
         String fullPath = mkdir(filePath) + saveFileName;
@@ -101,7 +101,7 @@ public class FileUtil {
     public static String saveTempFile(byte[] fileData, String fileName, String tempPath) {
         //임시저장 경로 가져오기
         String filePath = Optional.ofNullable(tempPath)
-                .orElse(PropertiesUtil.getApplicationProperty(TEMP_CRYPTO_FILE_SRC));
+                .orElse(getPropertyPath(TEMP_CRYPTO_FILE_SRC));
 
         String fullPath = mkdir(filePath) + fileName;
         saveTempFile(fullPath, fileData);
@@ -118,5 +118,14 @@ public class FileUtil {
             file.mkdir();
         }
         return returnPath + File.separator;
+    }
+
+    private static String getPropertyPath(String property) {
+        String path = PropertiesUtil.getApplicationProperty(property);
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        return path;
     }
 }
