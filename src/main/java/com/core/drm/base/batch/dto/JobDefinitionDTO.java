@@ -10,9 +10,14 @@ import lombok.Setter;
 import org.quartz.CronExpression;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
+import static com.core.drm.base.batch.constant.CronExpressionConst.EVERY_5_MINUTES;
+import static com.core.drm.base.batch.constant.JobState.ENABLE;
 import static com.core.drm.base.batch.constant.errormessage.BatchExceptionMessage.INVALID_VALUE;
+import static com.core.drm.base.constant.DataStateCode.I;
 
 @Getter
 @Setter
@@ -78,5 +83,13 @@ public class JobDefinitionDTO {
                 .dataCode(dataCode)
                 .jobParams(jobParams)
                 .build();
+    }
+
+    public JobDefinitionDTO initDTO() {
+        this.state = Optional.ofNullable(state).orElse(ENABLE.name());
+        this.dataCode = Optional.ofNullable(dataCode).orElse(I.name());
+        this.jobParams = Optional.ofNullable(jobParams).orElse(Collections.emptyMap());
+        this.cronExpression = Optional.ofNullable(cronExpression).orElse(EVERY_5_MINUTES.getExpression());
+        return this;
     }
 }
