@@ -19,7 +19,6 @@ public class ResponseProcessService {
 
     public void saveCryptoResponse(String url) {
         log.debug("call save response, current req url: {}", url);
-        //TODO: 암복호화 요청에 대한 응답리턴할 경우 => url list 로 처리 할것 (allow url table 필요)
         if (url.equals("/dec/file") || url.equals("/enc/file")) {
             FileRequest currentFileRequest = (FileRequest) ThreadLocalMapUtil.get(FILE_REQUEST);
             ThreadLocalMapUtil.clear();
