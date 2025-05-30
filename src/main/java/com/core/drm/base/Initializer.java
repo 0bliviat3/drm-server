@@ -20,14 +20,13 @@ public class Initializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         registerAdmin();
+        registerGuest();
         generatePem();
     }
 
-    private void registerAdmin() {
-        String flag = PropertiesUtil.getApplicationProperty("app.init.admin");
+    private void registerAccount(String flag, String account) {
         if (flag.equals("true")) {
-            log.debug("create admin account!");
-            String account = PropertiesUtil.getApplicationProperty("default.admin.account");
+            log.debug("create account!");
             UserDTO userDTO = UserDTO.builder()
                     .userId(account)
                     .name(account)
@@ -35,6 +34,18 @@ public class Initializer implements ApplicationRunner {
                     .build();
             signService.signUp(userDTO);
         }
+    }
+
+    private void registerGuest() {
+        String flag = PropertiesUtil.getApplicationProperty("app.init.guest");
+        String account = PropertiesUtil.getApplicationProperty("default.guest.account");
+        registerAccount(flag, account);
+    }
+
+    private void registerAdmin() {
+        String flag = PropertiesUtil.getApplicationProperty("app.init.admin");
+        String account = PropertiesUtil.getApplicationProperty("default.admin.account");
+        registerAccount(flag, account);
     }
 
     private void generatePem() {
