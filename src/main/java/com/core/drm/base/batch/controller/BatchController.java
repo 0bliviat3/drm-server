@@ -76,5 +76,10 @@ public class BatchController {
         return ResponseEntity.ok("배치 삭제 완료");
     }
 
+    @GetMapping("/batch-status/daily")
+    public List<BatchStatusDTO> countBatchStatusDaily() {
+        return jobExecutionService.countBatchStatus();
+    }
+
 
 }
