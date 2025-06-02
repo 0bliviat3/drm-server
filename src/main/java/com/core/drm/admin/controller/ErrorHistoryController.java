@@ -1,5 +1,6 @@
 package com.core.drm.admin.controller;
 
+import com.core.drm.admin.dto.ErrorCountDTO;
 import com.core.drm.admin.dto.ErrorHistoryDTO;
 import com.core.drm.admin.service.ErrorHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,10 @@ public class ErrorHistoryController {
         Page<ErrorHistoryDTO> errorPages = errorHistoryService.findAll(pageRequest);
 
         return errorPages.getContent();
+    }
+
+    @GetMapping("/error-history/week")
+    public List<ErrorCountDTO> countErrorHistoryWeekly() {
+        return errorHistoryService.countErrorHistoryWeekly();
     }
 }

@@ -1,6 +1,7 @@
 package com.core.drm.admin.service;
 
 import com.core.drm.admin.domain.ErrorHistory;
+import com.core.drm.admin.dto.ErrorCountDTO;
 import com.core.drm.admin.dto.ErrorHistoryDTO;
 import com.core.drm.admin.repository.ErrorHistoryRepository;
 import com.core.drm.base.util.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -49,5 +51,9 @@ public class ErrorHistoryService {
     public Page<ErrorHistoryDTO> findAll(Pageable pageable) {
         return errorHistoryRepository.findAll(pageable)
                 .map(ErrorHistory::toDTO);
+    }
+
+    public List<ErrorCountDTO> countErrorHistoryWeekly() {
+        return errorHistoryRepository.countErrorHistoryWeekly();
     }
 }
