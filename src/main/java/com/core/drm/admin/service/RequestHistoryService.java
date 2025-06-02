@@ -1,6 +1,7 @@
 package com.core.drm.admin.service;
 
 import com.core.drm.admin.domain.RequestHistory;
+import com.core.drm.admin.dto.RequestCountDTO;
 import com.core.drm.admin.dto.RequestHistoryDTO;
 import com.core.drm.admin.repository.RequestHistoryRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,5 +38,9 @@ public class RequestHistoryService {
     public Page<RequestHistoryDTO> findAll(Pageable pageable) {
         return requestHistoryRepository.findAll(pageable)
                 .map(RequestHistory::toDTO);
+    }
+
+    public List<RequestCountDTO> findWeeklyHistory() {
+        return requestHistoryRepository.countRequestHistoryWeekly();
     }
 }

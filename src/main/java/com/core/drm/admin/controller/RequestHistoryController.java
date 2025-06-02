@@ -1,5 +1,6 @@
 package com.core.drm.admin.controller;
 
+import com.core.drm.admin.dto.RequestCountDTO;
 import com.core.drm.admin.dto.RequestHistoryDTO;
 import com.core.drm.admin.service.RequestHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,10 @@ public class RequestHistoryController {
         return requestHistoryService
                 .findAll(pageRequest)
                 .getContent();
+    }
+
+    @GetMapping("/request-history/week-stats")
+    public List<RequestCountDTO> findWeeklyHistory() {
+        return requestHistoryService.findWeeklyHistory();
     }
 }
