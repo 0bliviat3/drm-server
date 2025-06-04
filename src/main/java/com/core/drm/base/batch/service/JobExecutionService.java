@@ -19,7 +19,7 @@ public class JobExecutionService {
     private final JobExecutionRepository jobExecutionRepository;
 
     public Page<JobExecution> findAllByPageable(Pageable pageable) {
-        return jobExecutionRepository.findAll(pageable);
+        return jobExecutionRepository.findAllByOrderByCreateTimeDesc(pageable);
     }
 
     public List<BatchStatusDTO> countBatchStatus() {

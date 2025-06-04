@@ -2,6 +2,8 @@ package com.core.drm.base.batch.repository;
 
 import com.core.drm.base.batch.controller.BatchStatusDTO;
 import com.core.drm.base.batch.domain.JobExecution;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,5 +20,7 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Inte
             GROUP BY status
             """, nativeQuery = true)
     List<BatchStatusDTO> countBatchStatusDaily();
+
+    Page<JobExecution> findAllByOrderByCreateTimeDesc(Pageable pageable);
 
 }
