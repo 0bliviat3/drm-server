@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,12 +73,11 @@ public class LoginController {
     }
 
     @GetMapping("/users")
-    public List<UserDTO> getUserList(
+    public Page<UserDTO> getUserList(
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        return signService.findAll(pageRequest)
-                .getContent();
+        return signService.findAll(pageRequest);
     }
 
 }
