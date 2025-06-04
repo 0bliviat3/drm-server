@@ -24,10 +24,10 @@ public class ErrorHistory {
     @Column(name = "error_code")
     private String errorCode;
 
-    @Column(name = "error_message")
+    @Column(name = "error_message", length = 2500)
     private String errorMessage;
 
-    @Column(name = "return_message")
+    @Column(name = "return_message", length = 2500)
     private String returnMessage;
 
     @Column(name = "event_time")

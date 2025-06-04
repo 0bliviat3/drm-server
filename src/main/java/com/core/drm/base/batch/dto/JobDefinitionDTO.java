@@ -22,6 +22,7 @@ import static com.core.drm.base.constant.DataStateCode.I;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class JobDefinitionDTO {
 
     private String jobBeanName;
