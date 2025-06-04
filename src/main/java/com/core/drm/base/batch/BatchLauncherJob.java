@@ -16,6 +16,10 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+
 import static com.core.drm.base.batch.constant.errormessage.BatchExceptionMessage.EXEC_JOB_ERR;
 import static com.core.drm.base.batch.constant.errormessage.BatchExceptionMessage.NOT_FOUND_JOB;
 
@@ -49,7 +53,9 @@ public class BatchLauncherJob implements Job {
 
     private JobParameters initParams(JobDefinition jobDefinition) {
         JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-        jobDefinition.getJobParams().forEach(jobParametersBuilder::addString);
+        Map<String, String> params = Optional.ofNullable(jobDefinition.getJobParams())
+                .orElse(Collections.emptyMap());
+        params.forEach(jobParametersBuilder::addString);
         jobParametersBuilder.addLong(TIMESTAMP, System.currentTimeMillis());
         return jobParametersBuilder.toJobParameters();
     }
