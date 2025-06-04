@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,13 +22,12 @@ public class ErrorHistoryController {
     private final ErrorHistoryService errorHistoryService;
 
     @GetMapping("/error-historys")
-    public List<ErrorHistoryDTO> findErrorHistory(
+    public Page<ErrorHistoryDTO> findErrorHistory(
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        Page<ErrorHistoryDTO> errorPages = errorHistoryService.findAll(pageRequest);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("eventTime").descending());
 
-        return errorPages.getContent();
+        return errorHistoryService.findAll(pageRequest);
     }
 
     @GetMapping("/error-history/week")

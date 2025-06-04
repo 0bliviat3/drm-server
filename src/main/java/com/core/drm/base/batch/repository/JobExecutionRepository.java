@@ -20,7 +20,4 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Inte
             GROUP BY status
             """, nativeQuery = true)
     List<BatchStatusDTO> countBatchStatusDaily();
-
-    Page<JobExecution> findAllByOrderByCreateTimeDesc(Pageable pageable);
-
 }

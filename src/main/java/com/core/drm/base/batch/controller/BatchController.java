@@ -11,7 +11,9 @@ import com.core.drm.base.batch.service.StepExecutionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,23 +33,21 @@ public class BatchController {
     private final BatchSchedulerService batchSchedulerService;
 
     @GetMapping("/job-executions")
-    public List<JobExecution> getJobExecutionList(
+    public Page<JobExecution> getJobExecutionList(
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        return jobExecutionService
-                .findAllByPageable(pageRequest)
-                .getContent();
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createTime").descending());
+
+        return jobExecutionService.findAllByPageable(pageRequest);
     }
 
     @GetMapping("/step-executions")
-    public List<StepExecution> getStepExecutionList(
+    public Page<StepExecution> getStepExecutionList(
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createTime").descending());
         return stepExecutionService
-                .findAllByPageable(pageRequest)
-                .getContent();
+                .findAllByPageable(pageRequest);
     }
 
     @GetMapping("/jobs")
