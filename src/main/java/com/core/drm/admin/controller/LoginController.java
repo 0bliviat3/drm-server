@@ -80,4 +80,9 @@ public class LoginController {
         return signService.findAll(pageRequest);
     }
 
+    @GetMapping("/user")
+    public boolean isExistUser(String userId) {
+        return signService.isExistUserId(userId);
+    }
+
 }
