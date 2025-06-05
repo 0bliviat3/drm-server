@@ -127,7 +127,16 @@ public class SignService {
     또한 삭제시 현재 세션인 경우 세션에서 제거할수 있도록 dto를 리턴해준다.
      */
     public UserDTO modifyUser(UserDTO userDTO) {
-        validateSignIn(userDTO);
+        isExistUserId(userDTO.getUserId());
+        String salt = generateSalt();
+        String hashWord = hashPassword(
+                UserDTO.builder()
+                        .password(userDTO.getPassword())
+                        .passwordSalt(salt)
+                        .build()
+        );
+        userDTO.setPassword(hashWord);
+        userDTO.setPasswordSalt(salt);
         User user = userService.modifyUser(userDTO);
         return user.toDTOWithoutPassWord();
     }
