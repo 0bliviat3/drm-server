@@ -32,8 +32,12 @@ public class DRMExceptionService {
     private final ErrorHistoryService errorHistoryService;
 
     public void saveFail() {
+        FileRequest fileRequest = (FileRequest) ThreadLocalMapUtil.get(FILE_REQUEST);
+        if (fileRequest == null) {
+            return;
+        }
         CryptoHistory cryptoHistory =
-                cryptoHistoryService.saveCryptoHistory((FileRequest) ThreadLocalMapUtil.get(FILE_REQUEST), FAIL);
+                cryptoHistoryService.saveCryptoHistory(fileRequest, FAIL);
         cryptoResultService.saveCryptoResult(cryptoHistory);
         ThreadLocalMapUtil.clear();
     }
