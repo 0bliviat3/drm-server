@@ -25,6 +25,7 @@ public class RequestHistoryService {
                 .user(userService.findById(requestHistoryDTO.userId()))
                 .requestIP(requestHistoryDTO.requestIP())
                 .requestTime(requestHistoryDTO.requestTime())
+                .requestURL(requestHistoryDTO.requestURL())
                 .build();
 
         return requestHistoryRepository.save(requestHistory).toDTO();
