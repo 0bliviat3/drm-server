@@ -1,4 +1,4 @@
-package com.core.drm.base.batch.controller;
+package com.core.drm.base.batch.dto;
 
 import lombok.Builder;
 import lombok.Getter;

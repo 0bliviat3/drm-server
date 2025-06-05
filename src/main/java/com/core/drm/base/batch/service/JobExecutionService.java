@@ -1,6 +1,6 @@
 package com.core.drm.base.batch.service;
 
-import com.core.drm.base.batch.controller.BatchStatusDTO;
+import com.core.drm.base.batch.dto.BatchStatusDTO;
 import com.core.drm.base.batch.domain.JobExecution;
 import com.core.drm.base.batch.repository.JobExecutionRepository;
 import lombok.RequiredArgsConstructor;

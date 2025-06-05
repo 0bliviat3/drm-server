@@ -3,6 +3,7 @@ package com.core.drm.base.batch.controller;
 import com.core.drm.base.batch.domain.JobDefinition;
 import com.core.drm.base.batch.domain.JobExecution;
 import com.core.drm.base.batch.domain.StepExecution;
+import com.core.drm.base.batch.dto.BatchStatusDTO;
 import com.core.drm.base.batch.dto.JobDefinitionDTO;
 import com.core.drm.base.batch.service.BatchSchedulerService;
 import com.core.drm.base.batch.service.JobDefinitionService;
