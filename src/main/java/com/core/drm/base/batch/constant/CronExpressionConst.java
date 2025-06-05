@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum CronExpressionConst {
 
-    EVERY_5_MINUTES("0 0/5 * 1/1 * ? *")
+    EVERY_5_MINUTES("0 0/5 * 1/1 * ? *"),
+    DAILY_1_AM("0 0 0,1 ? * * *")
     ;
 
     private final String expression;
