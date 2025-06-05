@@ -43,6 +43,8 @@ public class LoginController {
     private void setCookies(UserDTO user, HttpServletResponse response) {
         Cookie idCookie = new Cookie("userId", user.getUserId());
         Cookie nameCookie = new Cookie("userName", user.getName());
+        idCookie.setPath("/");
+        nameCookie.setPath("/");
         response.addCookie(idCookie);
         response.addCookie(nameCookie);
     }
